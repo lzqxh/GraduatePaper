@@ -1,0 +1,18 @@
+﻿
+% Chinese captions
+%
+% character set: GB 2312-80
+% encoding: EUC
+\renewcommand\contentsname{目\qquad 录}
+\renewcommand\listfigurename{插图}
+\renewcommand\listtablename{表格}
+\renewcommand\indexname{索引}
+\renewcommand\figurename{图}
+
+\renewcommand\tablename{表}
+
+
+\renewcommand\partname{第\CJKnumber{\value{part}}部分}
+\renewcommand\chaptername{第~\arabic{chapter}~章}
+\renewcommand\appendixname{附录~\@Alph\c@chapter}
+\endinput
