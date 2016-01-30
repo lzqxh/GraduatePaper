@@ -43,7 +43,7 @@ $\delta^+(S)=\{(u, v) \in E | u \notin S, v \in S\}$表示所有离开S的边的
 
 在图论中，网络是指一个边带权有向图，即有向图$G(V, E)$加上一个边的权值函数$c: E \rightarrow \mathbb{N}^+$（在网络中又称容量函数）。
 对于V中的两个顶点$s, t \in V$，一个可行s-t流（在上下文没有歧义的情况下，简称可行流），是指一个从边集到正整数集的映射$f: E \rightarrow \mathbb{N}^+$ 满足：
-\begin{equation} \begin{aligned}  
+\begin{equation} \label{EquationFlow} \begin{aligned}
   \sum_{e\in \delta^+(s)}{f(e)}&=\sum_{e\in \delta^-(t)}{f(e)}& \\
   \sum_{e\in \delta^+(v)}{f(e)}&=\sum_{e\in \delta^-(v)}{f(e)}, & v &\in V \setminus \{s, t\} \\
   0 \le f(e) &\le c(e), & e &\in E \\
@@ -56,7 +56,7 @@ $\delta^+(S)=\{(u, v) \in E | u \notin S, v \in S\}$表示所有离开S的边的
 \subsection{顶点覆盖问题的数学描述及其线性规划松弛}
 对于给定图$G(V, E)$， 求其最小顶点覆盖集合可以表示成下面整数规划模型：
 \begin{equation} \label{ModelLPVC1} \begin{aligned}
-  minimize\; & \sum_{v \in V}{x(v)} &\\
+  minimize\; & (\textbf{val(x)} = \sum_{v \in V}{x(v)}) &\\
   subject\; to\; & x(u) + x(v) \ge 1, &(u, v) \in E \\
    & x(u) \in \{0, 1\}, & u \in V
 \end{aligned} \end{equation}
@@ -67,7 +67,7 @@ $\delta^+(S)=\{(u, v) \in E | u \notin S, v \in S\}$表示所有离开S的边的
 在整数规划模型中，可以通过取消值必须是整数的限制进行线性规划松弛，可以获得对应线性规划模型。
 这里我们将上面的模型中$w(u) \in \{0, 1\}$的条件进行松弛，
 \begin{equation} \begin{aligned}
-  minimize\; & \sum_{v \in V}{x(v)} &\\
+  minimize\; & (\textbf{val(x)} = \sum_{v \in V}{x(v)}) &\\
   subject\; to\; & x(u) + x(v) \ge 1, &(u, v) \in E \\
    & 0 \le x(u) \le 1, & u \in V
 \end{aligned} \end{equation}
@@ -120,7 +120,7 @@ $\delta^+(S)=\{(u, v) \in E | u \notin S, v \in S\}$表示所有离开S的边的
 \subsection{原始对偶技巧}
 基于线性规划问题的对偶性，所有纯粹线性规划问题存在对应的原始对偶模型。下面，我们将顶点覆盖问题进行线性松弛后的获得的LPVC问题（模型\ref{ModelLPVC1}）转化成其原始对偶模型，如下：
 \begin{equation} \label{ModelLPVC2} \begin{aligned}
-  maximize\; & \sum_{e \in E}{y_e} &\\
+  maximize\; & (\textbf{val(y)} = \sum_{e \in E}{y_e}) &\\
   subject\; to\; & \sum_{e \in \delta(v)}{y_e \le 1}, & v \in V \\
    & y_e \ge 0, & e \in E
 \end{aligned} \end{equation}
@@ -128,29 +128,85 @@ $\delta^+(S)=\{(u, v) \in E | u \notin S, v \in S\}$表示所有离开S的边的
 这里为了区分两个求解LPVC问题的模型，我们将式子\ref{ModelLPVC1}命名为Primal-LPVC,将式子\ref{ModelLPVC2}命名为Dual-LPVC。
 下面的引理给出两个模型之间的联系。
 \begin{lemma}
-假设向量x满足Primal-LPVC的约束条件，向量y满足Dual-LPVC的约束条件，则$\sum\limits_{v \in V}{x_v} \ge \sum\limits_{e \in E}{y_e}$。
-若$\sum\limits_{v \in V}{x_v} = \sum\limits_{e \in E}{y_e}$, 则x与y分别是Primal-LPVC和Dual-LPVC的最优解。
+假设向量x满足Primal-LPVC的约束条件，向量y满足Dual-LPVC的约束条件，则$val(x) \ge val(y)$。
+若$val(x) = val(y)$, 则x与y分别是Primal-LPVC和Dual-LPVC的最优解。
 \end{lemma}
 \begin{proof}
   对于任意E中的边$e = \{u, v\}$, 在Primal-LPVC中有$x_u + x_v \ge 1$，在Dual-LPVC中有$y_e \ge 0$。
   结合上述两个不等式，显然有，\[\sum\limits_{e \in E}{y_e(x_u + x_v)} \ge \sum\limits_{e \in E}{y_e}\]
-  
+
   对任意V中的顶点v, $x_v \ge 0$ 且 $\sum_{e \in \delta(v)}{ye} \le 1$，显然结合上述两个不等式可以获得，
   \[\sum\limits_{v \in V}{(\sum\limits_{e \in \delta(v)}{y_e})x_v} \le \sum\limits_{v \in V}{x_v}\]
-  
-  最后利用结合率，我们可以将$\sum_{e \in E}{y_e(x_u + x_v)}$整理成$\sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v}$。  
+
+  最后利用结合率，我们可以将$\sum_{e \in E}{y_e(x_u + x_v)}$整理成$\sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v}$。
   综上有,
   \[
     \sum_{e \in E}{y_e} \le \sum_{e \in E}{y_e(x_u + x_v)}  = \sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v} \le \sum_{v \in V}{x_v}
   \]
-  
-  另外当$\sum\limits_{v \in V}{x_v} = \sum\limits_{e \in E}{y_e}$时，对任意满足Primal-LPVC约束条件的$x'$, 
+
+  另外当$\sum\limits_{v \in V}{x_v} = \sum\limits_{e \in E}{y_e}$时，对任意满足Primal-LPVC约束条件的$x'$,
   我们可以获得$\sum\limits_{v \in V}{x'_v} \le \sum\limits_{e \in E}{y_e} = \sum\limits_{v \in V}{x_v}$。因此x是Primal-LPVC的最优解，同理y也是Dual-LPVC的最优解。
 \end{proof}
 \subsection{将Dual-LPVC转化成最大网络流问题}
 本节中我们首先将根据图$G(V, E)$构造一个网络W。
 之后并通过证明任意一个网络W上的可行流与一组满足Dual-LPVC约束的向量y一一对应，来证明求Dual-LPVC的最优解等价与求解该网络上的最大流。
 最后，我们给出通过最大可行流构造Primal-LPVC与Dual-LPVC最优解的方法。
+
+\begin{definition}
+对于图$G = (V, E)$, 定义与其对应的网络$W = (G_W,\; c)$，如下:
+\begin{equation*}\begin{aligned}
+    &G_W = (V_W, E_W) \\
+    &V_W = \{l_v\;|\;v \in V\} \cup \{r_v\;|\;r \in V\} \cup \{ s, t \} \\
+    &E_W = \{(s, l_v)\;|\;v \in V\} \cup \{(l_u, r_v)\;|\;\{u, v\} \in E\} \cup \{(r_v, t)\;|\;v \in V\}\\
+    &c(e) =   \begin{cases}
+        1, & \mbox{if } e = (s, l_v)\;or\;e = (r_v, t)\\
+        \infty, & \mbox(otherwise.)\\
+  \end{cases}
+\end{aligned}\end{equation*}
+\end{definition}
+
+\begin{property}
+图G上的一个满足Dual-LPVC约束的向量y,对应网路W上的一个流量为$2val(y)$的可行流。
+\end{property}
+\begin{proof}
+  首先，我们构造一个流量函数$f:E_W \rightarrow \mathbb{N}$, 如下：
+  \begin{equation*}\begin{aligned} \begin{cases}
+    f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e}, & \mbox{for } v \in V \\
+    f(l_u, r_v) = y_e, & \mbox{for } \{u, v\} \in E.
+  \end{cases}\end{aligned}\end{equation*} 
+  回顾可行流需要满足的条件(式子\ref{EquationFlow}), 首先由Dual—LPVC的约束可以得到，$0 \le f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e} \le 1 = c(e)$。
+  其次，对于任意$v \in V$ 显然, 
+  \[ \begin{aligned}
+     \sum_{e\in \delta^+(l_v)}{f(e)} = f(s, l_v) = \sum\limits_{e \in \delta(v)}{y_e} = \sum_{\{v, u\} \in E}{f(l_v, r_u)} = \sum_{e\in \delta^-(l_v)}{f(e)} \\
+    \sum_{e\in \delta^+(r_v)}{f(e)} = \sum_{\{v, u\} \in E}{f(l_u, r_v)}  = \sum\limits_{e \in \delta(v)}{y_e} = f(r_v, t) = \sum_{e\in \delta^-(r_v)}{f(e)}
+  \end{aligned} \]
+  综上$f$是网络W上的一个\textbf{可行流}, 其流量$F = 2\sum_{e \in E}{y_e} = 2val(y)$（每条边上的$y_e$被计入两次）。证毕。  
+\end{proof}
+
+\begin{property}
+网络W上的一个可行流$f$，对应一个图G上满足Dual-LPVC约束的向量y,且$val(y) = \frac{F}{2}$。
+\end{property}
+\begin{proof}
+构造y如下，$y_{e = \{u, v\}} = \frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))$。
+此时对于任意顶点$v \in V$, $\sum\limits_{e \in \delta(v)}{y_e} = \sum\limits_{\{u, v\}\in E}{\frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))} \le \frac{1}{2}(c(s, l_v) + c(r_v, t)) = 1$。
+因此y满足Dual-LPVC约束。
+
+另外显然$val(y) = \sum_{e \in E}{y_e} = \frac{1}{2}\sum\limits_{\{u, v\}\in E}{(f(l_u, r_v) + f(l_v, r_u))} = \frac{F}{2}$。证毕。
+\end{proof}
+
+最后我们给出通过网络W上的最大可行流，构造Primal-LPVC最优解方法。
+
+假设$f$是网络W上的最大可行流，则可以通过网络W在可行流$f$下的残余图$G_f$构造Primal-LPVC的半整数最优解x如下：
+\begin{equation*}
+  x_v = \begin{cases}
+            0, & \mbox{如果在图$G_f$中，$l_v$是从s出发可达的并且$r_v$是从s出发不可达的}  \\
+            1, & \mbox{如果在图$G_f$中，$l_v$是从s出发不可达的并且$r_v$是从s出发可达的}  \\
+            \frac{1}{2}, & \mbox{其他。}
+          \end{cases}
+\end{equation*}
+
+\textcolor[rgb]{1.00,0.00,0.00}{待补充，证明x是最优解}
+
 \subsection{将VCAL问题核心化}
 
 \section{算法有效性证明}
