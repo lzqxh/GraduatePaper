@@ -12,7 +12,7 @@
 %      硕士研究生要求。
 %=========================================================================%
 
-\documentclass[12pt,openany,a4paper,twoside]{mybook}
+\documentclass[12pt,openany,a4paper,twoside]{book}
 %algorithm和algorithmic这两个宏包用于画伪代码
 %\usepackage{algorithm}
 %\usepackage{algorithmic}
@@ -73,7 +73,10 @@
 %
 %\include{content/Chapter-summary}        %*********总结与展望
 
-\include{content/Chapter-problemDescribeAndSymbol}
+\include{content/algorithm/Chapter-problemDescribeAndSymbol}
+\include{content/algorithm/Chapter-problemToNetwork}
+\include{content/algorithm/Chapter-kernelisedAlgorithm}
+\include{content/algorithm/Chapter-branchAlgorithm}
 
 
 %
@@ -84,8 +87,8 @@
 %
 \include{appendix/appendix}      %********附录
 %
-\include{appendix/resume}        %********个人简历
+%\include{appendix/resume}        %********个人简历
 %
-\include{appendix/thanks}        %********致谢
+%\include{appendix/thanks}        %********致谢
 %
 \end{document}
