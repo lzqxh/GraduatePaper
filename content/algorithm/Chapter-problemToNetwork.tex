@@ -1,8 +1,6 @@
 
-\section{将LPVC问题转换成最大网络流问题} 
-本节中我们将会给出算法的具体流程。本文提出求解VCAL的算法主体部分是分支与界法，通过仔细设计分支规则以及分支之后的核心化技巧，
-保证整棵搜索树大小不超过$2.618^(k-vc^*(G))$。我们借鉴Iwata等\upcite{iwata2014linear}核心化的思路，
-在搜索树的每个节点也通过网络流来提升核心化的效率。最终成功获得多项式部分不超过$2.618^(k-vc^*(G))$的线性固定参数算法（FPT）。
+\section{将LPVC问题转换成最大网络流问题}
+
 \subsection{原始对偶技巧}
 基于线性规划问题的对偶性，所有纯粹线性规划问题存在对应的原始对偶模型。下面，我们将顶点覆盖问题进行线性松弛后的获得的LPVC问题（模型\ref{ModelLPVC1}）转化成其原始对偶模型，如下：
 \begin{equation} \label{ModelLPVC2} \begin{aligned}
@@ -14,31 +12,33 @@
 这里为了区分两个求解LPVC问题的模型，我们将式子\ref{ModelLPVC1}命名为Primal-LPVC,将式子\ref{ModelLPVC2}命名为Dual-LPVC。
 下面的引理给出两个模型之间的联系。
 \begin{lemma} \label{relationBwtPrimalAndDual}
-对于图$G(V, E)$，假设函数$x$是其Primal-LPVC上的解，函数$y$是其Dual-LPVC上的解，则$val(x) \ge val(y)$。
-若$val(x) = val(y)$, 则x与y分别是图G在Primal-LPVC和Dual-LPVC上的最优解。
+对于图$G(V, E)$，假设函数$x$是其Primal-$LPVC(G)$上的解，函数$y$是其Dual-$LPVC(G)$上的解，则$val(x) \ge val(y)$。
+若$val(x) = val(y)$, 则x与y分别Primal-$LPVC(G)$和Dual-$LPVC(G)$上的最优解。
 \end{lemma}
 \begin{proof}
-  对于任意E中的边$e = \{u, v\}$, 在Primal-LPVC中有$x_u + x_v \ge 1$，在Dual-LPVC中有$y_e \ge 0$。
-  结合上述两个不等式，显然有，\[\sum\limits_{e \in E}{y_e(x_u + x_v)} \ge \sum\limits_{e \in E}{y_e}\]
+  对于任意E中的边$e = \{i, j\}$, 在Primal-$LPVC(G)$中有$x_i + x_j \ge 1$，在Dual-$LPVC(G)$中有$y_e \ge 0$。
+  结合上述两个不等式，显然有，\[\sum\limits_{e=\{i, j\} \in E}{y_e(x_i + x_j)} \ge \sum\limits_{e \in E}{y_e}\]
 
-  对任意V中的顶点v, $x_v \ge 0$ 且 $\sum_{e \in \delta(v)}{ye} \le 1$，显然结合上述两个不等式可以获得，
+  对任意V中的顶点v, $x_v \ge 0$ 且 $\sum_{e \in \delta(v)}{y_e} \le 1$，显然结合上述两个不等式可以获得，
   \[\sum\limits_{v \in V}{(\sum\limits_{e \in \delta(v)}{y_e})x_v} \le \sum\limits_{v \in V}{x_v}\]
 
-  最后利用结合率，我们可以将$\sum_{e \in E}{y_e(x_u + x_v)}$整理成$\sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v}$。
+  最后利用结合率，我们可以将$\sum_{e=\{i, j\} \in E}{y_e(x_i + x_j)}$整理成$\sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v}$。
   综上有,
   \[
-    \sum_{e \in E}{y_e} \le \sum_{e \in E}{y_e(x_u + x_v)}  = \sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v} \le \sum_{v \in V}{x_v}
+    \sum_{e \in E}{y_e} \le \sum_{e=\{i, j\} \in E}{y_e(x_i + x_j)}  = \sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v} \le \sum_{v \in V}{x_v}
   \]
 
-  另外当$\sum\limits_{v \in V}{x_v} = \sum\limits_{e \in E}{y_e}$时，对任意满足Primal-LPVC约束条件的$x'$,
-  我们可以获得$\sum\limits_{v \in V}{x'_v} \le \sum\limits_{e \in E}{y_e} = \sum\limits_{v \in V}{x_v}$。因此x是Primal-LPVC的最优解，同理y也是Dual-LPVC的最优解。
+  另外当$\sum\limits_{v \in V}{x_v} = \sum\limits_{e \in E}{y_e}$时，对任意满足Primal-$LPVC(G)$约束条件的$x'$,
+  我们可以获得$\sum\limits_{v \in V}{x'_v} \le \sum\limits_{e \in E}{y_e} = \sum\limits_{v \in V}{x_v}$。因此x是Primal-$LPVC(G)$的最优解，同理y也是Dual-$LPVC(G)$的最优解。
 \end{proof}
 
-\subsection{将Dual-LPVC转化成最大网络流问题} \label{TransformToNetwork}
+\subsection{将Dual-$LPVC(G)$转化成最大网络流问题} \label{TransformToNetwork}
 本节中我们首先将根据图$G(V, E)$构造一个网络W。
-之后并通过证明任意一个网络W上的可行流与一组满足Dual-LPVC约束的向量y一一对应，来证明求Dual-LPVC的最优解等价与求解该网络上的最大流。
-最后，我们给出通过最大可行流构造Primal-LPVC与Dual-LPVC最优解的方法。
+之后并通过证明任意一个网络W上的可行流与一组满足Dual-$LPVC(G)$约束的向量y一一对应且$F = 2val(y)$，
+来证明求Dual-$LPVC(G)$的最优解等价与求解该网络上的最大流。
+最后，我们给出通过最大可行流构造Primal-$LPVC(G)$与Dual-$LPVC(G)$最优解的方法。
 
+求解Dual-$LPVC(G)$的网络定义如下：
 \begin{definition}
 对于图$G = (V, E)$, 定义与其对应的网络$W = (G_W,\; c)$，如下:
 \begin{equation*}\begin{aligned}
@@ -47,13 +47,13 @@
     &E_W = \{(s, l_v)\;|\;v \in V\} \cup \{(l_u, r_v)\;|\;\{u, v\} \in E\} \cup \{(r_v, t)\;|\;v \in V\}\\
     &c(e) =   \begin{cases}
         1, & \mbox{if } e = (s, l_v)\;or\;e = (r_v, t)\\
-        \infty, & \mbox(otherwise.)\\
+        \infty, & \mbox{otherwise.}\\
   \end{cases}
 \end{aligned}\end{equation*}
 \end{definition}
 
 \begin{property}
-图G上的一个满足Dual-LPVC约束的向量y,对应网路W上的一个流量为$2val(y)$的可行流。
+图G上的一个满足Dual-$LPVC(G)$约束的函数y,对应网路W上的一个流量为$2val(y)$的可行流。
 \end{property}
 \begin{proof}
   首先，我们构造一个流量函数$f:E_W \rightarrow \mathbb{N}$, 如下：
@@ -61,7 +61,8 @@
     f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e}, & \mbox{for } v \in V \\
     f(l_u, r_v) = y_e, & \mbox{for } \{u, v\} \in E.
   \end{cases}\end{aligned}\end{equation*}
-  回顾可行流需要满足的条件(式子\ref{EquationFlow}), 首先由Dual—LPVC的约束可以得到，$0 \le f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e} \le 1 = c(e)$。
+  回顾可行流需要满足的条件(式子\ref{EquationFlow}), 首先由Dual-$LPVC(G)$的约束可以得到，
+  $0 \le f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e} \le 1 = c(e)$。
   其次，对于任意$v \in V$ 显然,
   \[ \begin{aligned}
      \sum_{e\in \delta^+(l_v)}{f(e)} = f(s, l_v) = \sum\limits_{e \in \delta(v)}{y_e} = \sum_{\{v, u\} \in E}{f(l_v, r_u)} = \sum_{e\in \delta^-(l_v)}{f(e)} \\
@@ -71,23 +72,23 @@
 \end{proof}
 
 \begin{property}
-网络W上的一个可行流$f$，对应一个图G上满足Dual-LPVC约束的向量y,且$val(y) = \frac{F}{2}$。
+网络W上的一个可行流$f$，对应一个图G上满足Dual-$LPVC(G)$约束的函数y,且$val(y) = \frac{F}{2}$。
 \end{property}
 \begin{proof}
 构造y如下，$y_{e = \{u, v\}} = \frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))$。
 此时对于任意顶点$v \in V$, $\sum\limits_{e \in \delta(v)}{y_e} = \sum\limits_{\{u, v\}\in E}{\frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))} \le \frac{1}{2}(c(s, l_v) + c(r_v, t)) = 1$。
-因此y满足Dual-LPVC约束。
+因此y满足Dual-$LPVC(G)$约束。
 
 另外显然$val(y) = \sum_{e \in E}{y_e} = \frac{1}{2}\sum\limits_{\{u, v\}\in E}{(f(l_u, r_v) + f(l_v, r_u))} = \frac{F}{2}$。证毕。
 \end{proof}
 
-最后我们给出通过网络W上的最大可行流，构造Primal-LPVC最优解方法。
+最后我们给出通过网络W上的最大可行流，构造Primal-$LPVC(G)$最优解方法。
 
-假设$f$是网络W上的最大可行流，则可以通过网络W在可行流$f$下的残余图$G_f$构造Primal-LPVC的半整数最优解x如下：
+假设$f$是网络W上的最大可行流，则可以通过网络W在可行流$f$下的残余图$G_W(f)$构造Primal-$LPVC(G)$的半整数最优解x如下：
 \begin{equation*}
   x_v = \begin{cases}
-            0, & \mbox{如果在图$G_f$中，$l_v$是从s出发可达的并且$r_v$是从s出发不可达的}  \\
-            1, & \mbox{如果在图$G_f$中，$l_v$是从s出发不可达的并且$r_v$是从s出发可达的}  \\
+            0, & \mbox{如果在图$G_W(f)$中，$l_v$是从s出发可达的并且$r_v$是从s出发不可达的}  \\
+            1, & \mbox{如果在图$G_W(f)$中，$l_v$是从s出发不可达的并且$r_v$是从s出发可达的}  \\
             \frac{1}{2}, & \mbox{其他。}
           \end{cases}
 \end{equation*}
