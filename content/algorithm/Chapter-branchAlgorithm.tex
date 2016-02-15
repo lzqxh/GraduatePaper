@@ -143,7 +143,7 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
   \textbf{分支规则 三 }\\
   \textbf{前提：} 顶点集合$V_1 \cup \{u_1, u_0\}\subseteq V$是图$G$中的一个独立集 \\
   \textbf{分支一：} $(G_1 \leftarrow G',\; k_1 \leftarrow k - \abs{V_1} - 2)$\\
-  \textbf{分支二：} $(G_1 \leftarrow G' \setminus \{u_1', u_2'\},\; k_1 \leftarrow k - \abs{V_0} - 2)$\\
+  \textbf{分支二：} $(G_2 \leftarrow G' \setminus \{u_1', u_2'\},\; k_2 \leftarrow k - \abs{V_0} - 2)$\\
   \hline
 \end{tabular} \vspace{0.5cm}
 
@@ -172,4 +172,6 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 最后当分支规则二不能应用时候，$V_0$的邻居顶点集合$V_1 \cup \{u_1, u_2\}$是图$G$的一个独立集。
 所以依据引理\ref{SurplusOne2}，此时我们可以将原问题实例分成两个分支，
 其中一个将顶点集合$V_1 \cup \{u_1, u_2\}$先取进顶点覆盖集，
-另外一个将顶点集合$V_1 \cup \{u_1, u_2\}$的邻居先取进顶点覆盖集合。综上分支规则三是正确的。
+另外一个将顶点集合$V_1 \cup \{u_1, u_2\}$的邻居先取进顶点覆盖集合。至此我们成功证明了分支规则三的正确性。
+
+
