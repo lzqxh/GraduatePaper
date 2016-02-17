@@ -9,9 +9,9 @@
 \vspace{0.5cm}
 为了更好的分析分支算法的时间负责度，首先给出以下引理：
 \begin{lemma} \label{LemmaUpdateMaxflow}
-假设图G满足$surplus(G) \ge 1$，且对于求解Dual-$LPVC(G)$的网络W已经求得其最大流$f$。
+假设图G满足$surplus(G) \ge 1$，且对于求解Dual-$LPVC(G)$模型的网络W已经求得其最大流$f$。
 令$G' = G \setminus S$，则可以在$O(\abs{S}(\abs{V} + \abs{E}))$的时间复杂度内
-获得$G'$上求解Dual-$LPVC(G')$的网络$W'$上的最大流$f'$。
+获得$G'$上求解Dual-$LPVC(G')$模型的网络$W'$上的最大流$f'$。
 \end{lemma}
 
 \begin{proof}
@@ -31,14 +31,16 @@
 证毕。
 \end{proof}
 
+
+\subsection{分支策略}
 在分支算法开始之前，首先我们在图G中任意取一个顶点$v \in V$，
 由于$surplus(G) \ge 1$，顶点$v$至少有两个邻居，取其中任意两个，记为$u_1, u_2$。
 
 
 对于图G中的任何一个顶点覆盖，显然或者包含了顶点$v$, 或者同时包含了顶点$u_1, u_2$。
-很自然，我们会考虑产生两个分支，使得其中一个将顶点$v$取进顶点覆盖集合，另外一个将顶点$u_1, u_2$取进。
+很自然，我们会考虑产生两个搜索分支，使得其中一个将顶点$v$取进顶点覆盖集合，另外一个将顶点$u_1, u_2$取进。
 为了限制搜索树大小，这里我们增加了一个前提条件，
-要求在图$G \setminus \{u_1, u_2\}$上全$\frac{1}{2}$函数是其Primal-$LPVC(G \setminus \{u_1, u_2\})$的最优解，
+要求在图$G \setminus \{u_1, u_2\}$上全$\frac{1}{2}$函数是其Primal-$LPVC(G \setminus \{u_1, u_2\})$模型的最优解，
 即$vc^*(G \setminus \{u_1, u_2\}) = (\abs{V} - 2) / 2$。\\
 
 \begin{tabular}{ p{0.9\headwidth} }
@@ -65,23 +67,35 @@
 \end{itemize}
 \end{claim}
 \begin{proof}
-（1）构造一个图$G\setminus\{u_1, u_2\}$上Primal-$LPVC(G\setminus\{u_1, u_2\})$模型的解$x^* : V \setminus \{u_1, u_2\} \rightarrow \{0, \frac{1}{2}, 1\}$如下，
-对于$v \in V_1$有$x_v = 1$；对于$v \in V_0$有$x_v = 0$; 剩下的$x_v = \frac{1}{2}$。
+（1）构造一个图$G\setminus\{u_1, u_2\}$上Primal-$LPVC(G\setminus\{u_1, u_2\})$模型的解$ : V \setminus \{u_1, u_2\} \rightarrow \{0, \frac{1}{2}, 1\}$如下，
+\begin{equation*}
+   \begin{cases}
+            x^*_v =0, & \mbox{对于顶点$v \in V_0$；}  \\
+            x^*_v =1, & \mbox{对于顶点$v \in V_1$；}  \\
+            x^*_v =\frac{1}{2}, & \mbox{其他。}
+          \end{cases}
+\end{equation*}
 由\ref{KerneliseAlgorithm}节给出的核心化算法定义，显然这样构造出来的$x^*$是Primal-$LPVC(G\setminus\{u_1, u_2\})$的最优解。
 又因为此时分支规则一不能应用，可得：
 $vc^*(G\setminus\{u_1, u_2\}) = val(x^*) = \abs{V_1} + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 < (\abs{V} - 2) / 2$，
 化简得：$\abs{V_1} < \abs{V_0}$。
 
 构造一个图$G$上Primal-$LPVC(G)$模型的解$x : V \rightarrow \{0, \frac{1}{2}, 1\}$如下，
-对于$v \in V_1 \cup \{u_1, u_2\}$有$x_v = 1$；对于$v \in V_0$有$x_v = 0$; 剩下的$x_v = \frac{1}{2}$。
-又因为已知的$vc^*(G) = \abs{V} / 2$，可得，
-$val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) = \abs{V} / 2$。
-化简得：$\abs{V_1} \ge \abs{V_0} - 1$。 
+\begin{equation*}
+   \begin{cases}
+            x_v =0, & \mbox{对于顶点$v \in V_0$；}  \\
+            x_v =1, & \mbox{对于顶点$v \in V_1 \cup \{u_1, u_2\}$；}  \\
+            x_v =\frac{1}{2}, & \mbox{其他。}
+          \end{cases}
+\end{equation*}
+又因为已知全$\frac{1}{2}$函数是其图$G$上Primal-$LPVC(G)$唯一最优解，可得，
+$val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) + 1/2 = (\abs{V} + 1) / 2$。
+化简得：$\abs{V_1} \ge \abs{V_0} - 1$。
 
 综上有$\abs{V_1} = \abs{V_0} - 1$。
 
 （2）$V_0$在图$G\setminus\{u_1, u_2\}$中是独立集，显然其在图G中也是独立集。
-假设$u_1$或者$u_2$不在$N_G(V_0)$中，则有$surplus(G) \le surplus_G(V_0) \le \abs{V_1} + 1 - \abs{V_2} = 0$。
+假设$u_1$或者$u_2$不在$N_G(V_0)$中，则有$surplus(G) \le surplus_G(V_0) \le \abs{V_1} + 1 - \abs{V_0} = 0$。
 这与已知$surplus(G) \ge 1$矛盾。故$u_1,u_2 \in N_G(V_0)$，即$N_G(V_0) = V_1 \cup \{u_1, u_2\}$。
 
 证毕。
@@ -90,7 +104,7 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 后面根据$V_1 \cup \{u_1, u_0\}$是否图$G$中的独立集进行分类讨论。
 %为了后文描述更加清晰，此处将$V_1 \cup \{u_1, u_0\}$重新定义成$V_1$。
 
-在$V_1 \cup \{u_1, u_0\}$不是图$G$中的一个独立集的情况下，给出分支规则二如下：\\
+在$V_1 \cup \{u_1, u_0\}$不是图$G$中的一个独立集的情况下，应用分支规则二如下：\\
 
 \begin{tabular}{ p{0.9\headwidth} }
   \hline
@@ -110,7 +124,7 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 令顶点集合$VC'$是图$G'$的最小顶点覆盖集之一，将其分解为$VC' = A \uplus B$，其中$A \subseteq S$且$B \subseteq N(S)$。
 
 因为$G'$中不存在孤立点且S是独立集，所以$S$中不被$A$包含的顶点肯定每个都与集合$B$相邻，即$N(S \setminus A) \subseteq B$。
-由$N(S)$非空可以得知$B \neq \emptyset$，在考虑$\abs{A} + \abs{B} = \abs{VC'} \le \abs{S}$，
+由$N(S)$并非图G中的一个独立集，可以得知$B \neq \emptyset$，再考虑$\abs{A} + \abs{B} = \abs{VC'} \le \abs{S}$，
 故$\abs{A} < \abs{S}$，因此$S \setminus A$显然也非空。
 考虑独立集$S \setminus A$的盈余值$surplus(S \setminus A) \le \abs{B} - (\abs{S \setminus A}) \le 0$，这与$surplus(G) \ge 1$矛盾。
 所以$G'$的最小顶点覆盖集大小大于$\abs{S}$。
@@ -126,17 +140,20 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 再回顾分支规则二，首先在我们应用分支规则的图$G$上有$surplus(G) \ge 1$，其次$V_0$是图G上盈余值为１的一个独立集，
 最后我们只在$V_0$的邻居顶点集合$V_1 \cup \{u_1, u_2\}$不是独立集的前提下应用分支规则二。
 所以，根据引理\ref{SurplusOne1}，此时存在图$G$的最小顶点覆盖集合包含所有$V_1 \cup \{u_1, u_2\}$中顶点，且不包含所有$V_0$中顶点。
-至此成功证明了分支规则二的正确性，我们可以在$V_1 \cup \{u_1, u_2\}$不是图$G$中的一个独立集的情况下，
+至此成功证明了分支规则二的正确性，我们可以在不能应用分支规则一并且$V_1 \cup \{u_1, u_2\}$不是图$G$中的一个独立集的情况下，
 先将$V_1 \cup \{u_1, u_2\}$中顶点选进顶点覆盖集合中。
 
-同时，对于分支规则二产生的图$G_1$，其等价于前文中我们对图$G \setminus \{u_1, u_2\}$应用核心化算法收缩出来的新图$G'$，
-在核心化算法中，已经获得了其对应的求解Dual-$LPVC(G_1)$模型的最优解。所以不需要额外时间复杂度去求解对应的网络流的最大流，
+接下来分析分支规则二的时间复杂度。
+显然应用核心化算法在图$G \setminus \{u_1, u_2\}$上，
+和判断顶点集合$V_1 \cup \{u_1, u_2\}$是否图G中的独立集均可以在$O(\abs{V} + \abs{E})$时间负责度内完成。
+对于分支规则二产生的图$G_1$，其等价于前文中我们对图$G \setminus \{u_1, u_2\}$应用核心化算法收缩出来的新图$G'$，
+在核心化算法中，已经获得了其对应的求解Dual-$LPVC(G')$模型的网络的最大流。所以不需要额外时间复杂度去求解该网络的最大流，
 故分支规则二，也可以在线性时间内应用。
 
 最后讨论剩余的情况，此时$V_1 \cup \{u_1, u_2\}$是图$G$中的一个独立集。
 
 因为$surplus_G(V_1 \cup \{u_1, u_2\}) \ge surplus(G) \ge 1$，所以独立集$V_1 \cup \{u_1, u_2\}$至少有两个邻居不在点集$V_0$中，
-即在图$G'$上，保留其至少有两个邻居，这里我们取其中任意两个，设为$u_1', u_2'$。\\
+即在图$G'$上，保留其至少两个邻居，这里我们取其中任意两个，设为$u_1', u_2'$。\\
 
 \begin{tabular}{ p{0.9\headwidth} }
   \hline
@@ -150,14 +167,14 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 为了证明分支规则三的正确性，同样我们此处也引进一个新的引理，如下：
 \begin{lemma} \label{SurplusOne2}
   对于图$G(V, E)$，假设$surplus(G) \ge 1$且存在独立集$S \subseteq V$满足$surplus(S) = 1$和$N(S)$是独立集，
-则或者存在一个图$G$的最小顶点覆盖，其包含所有$N(S)$中顶点且不包含所有$S$中顶点；
-或者与之相反，存在一个图$G$的最小顶点覆盖其包含所有$S$中顶点且不包含所有$N(S)$中顶点。
+则或者存在一个图$G$的最小顶点覆盖，其包含所有$N(S)$中顶点；
+或者与之相反，存在一个图$G$的最小顶点覆盖其不包含所有$N(S)$中顶点。
 \end{lemma}
 \begin{proof}
 令顶点集合$VC$是图$G$的最小顶点覆盖集之一，将其分解为$VC = A \uplus B \uplus C$，
 其中$A \subseteq S$，$B \subseteq N(S)$且$C \cap (S \cup N(S)) = \emptyset$。
 显然当$A = \emptyset$时，$B = N(S)$；当时$B = \emptyset$时，$A = S$。
-因此我们只需要证明当顶点集合$A,B$同时非空时候，可以构造出一新的图$G$的最小顶点覆盖使得其中一个集合为空。
+因此我们只需要证明当顶点集合$A,B$同时非空时，可以构造出一新的图$G$的最小顶点覆盖使得其中一个集合为空。
 
 假设顶点集合$A,B$同时非空。同理于引理\ref{SurplusOne1}的证明，可以得知此时$\abs{A} + \abs{B} \ge \abs{S}　+ 1$。
 构造一新的顶点集合$VC' = N(S) \cup C$，显然$VC'$是图G的一个顶点覆盖，又因为$\abs{VC'} = \abs{C} + \abs{S} + 1 \le \abs{A} + \abs{B} + \abs{C} = \abs{VC}$，
@@ -167,11 +184,95 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 \end{proof}
 
 考虑在分支规则一与分支规则二均不能应用的情况下，
-首先首先在我们应用分支规则的图$G$上已经有了$surplus(G) \ge 1$；
+首先在我们应用分支规则的图$G$上已经有了$surplus(G) \ge 1$；
 其次当分支规则一不能应用时候，$V_0$是图G上盈余值为１的一个独立集；
 最后当分支规则二不能应用时候，$V_0$的邻居顶点集合$V_1 \cup \{u_1, u_2\}$是图$G$的一个独立集。
 所以依据引理\ref{SurplusOne2}，此时我们可以将原问题实例分成两个分支，
 其中一个将顶点集合$V_1 \cup \{u_1, u_2\}$先取进顶点覆盖集，
 另外一个将顶点集合$V_1 \cup \{u_1, u_2\}$的邻居先取进顶点覆盖集合。至此我们成功证明了分支规则三的正确性。
 
+接下来我们分析执行分支规则三的时间复杂度。
+根据我们的分类讨论情形，当分支规则一和二不能执行的时候，总会执行分支规则三，因此不需要额外测试是否执行该规则。
+在利用核心化算法构造$G'$的时候，已经求得其Dual-$LPVC(G')$模型的最优解。
+同时依据引理\ref{LemmaUpdateMaxflow}，可以在求解Dual-$LPVC(G')$模型的网络的最大可行流的基础上，
+在$O(2(\abs{V} + \abs{E}))$的时间负责度内构造分支二的对应的最大可行流。
+故，分支规则三也能在线性时间复杂度内被执行。
+
+\subsection{算法时间复杂度分析}
+在上一节中，我们已经给出了3个分支规则，并且证明每个规则的正确性以及保证他们都能在线性时间内被执行。
+接下来只剩下讨论搜索树大小。这里我们利用参数$u$的下降来进行分析。
+
+对于我们核心化算法来说，在给出的时候已经证明其保证收缩后的VCAL问题实例$(G', k')$相比原来的VCAL问题实例$(G, k)$，有：
+$\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的每个分支的问题实例的参数，对比应用前的参数的变化。
+
+\vspace{0.5cm}
+
+首先回顾上一节给出的分支规则一。
+我们通过或者使顶点覆盖集合包含顶点$v$, 或者使顶点覆盖集合包含顶点$u_1, u_2$，在原来VCAL问题实例的基础上产生了两个搜索分支。
+这里对每个分支上的新问题实例的参数分别进行分析。
+
+对于分支一，由于$surplus(G) \ge 1$，所以删除掉一个顶点后的图$G_1$上有$surplus(G_1) \ge 0$。
+根据引理\ref{relationBwtSurplusAndLPVC}，可以得知全$\frac{1}{2}$函数是图$G_1$上的Primal-$LPVC(G_1)$模型的最优解，即$vc^*(G_1) = \frac{\abs{V} - 1}{2}$。
+所以有$\mu(G_1, k_1) = k_1 - vc^*(G_1) = k - 1 - \frac{\abs{V} - 1}{2} = \mu(G, k) - \frac{1}{2}$。
+
+对于分支二，由分支规则一应用的前提可以得知$vc^*(G_2) = \frac{\abs{V} - 2}{2}$。
+所以有$\mu(G_2, k_2) = k_2 - vc^*(G_2) = k - 2 - \frac{\abs{V} - 2}{2} = \mu(G, k) - 1$。
+
+综上，这里更新分支规则一的描述，如下：\\
+
+\begin{tabular}{ p{0.12\headwidth} | p{0.12\headwidth}p{0.66\headwidth} }
+  \multicolumn{3}{l}{ \textbf{分支规则 一：} }\\
+  \hline
+  \textbf{前提：}  & \multicolumn{2}{l}{在图$G \setminus \{u_1, u_2\}$上，$vc^*(G \setminus \{u_1, u_2\}) = (\abs{V} - 2) / 2$}\\
+  \hline
+  \textbf{分支一：} & 问题实例：&$(G_1 \leftarrow G \setminus \{v\},\; k_1 \leftarrow k - 1)$ \\
+                    & 参数：&$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$\\
+  \hline
+  \textbf{分支二：} & 问题实例：&$(G_2 \leftarrow G \setminus \{u_1, u_2\},\; k_2 \leftarrow k - 2)$\\
+                    & 参数：&$\mu(G_2, k_2) = \mu(G, k) - 1$\\
+  \hline
+\end{tabular} \vspace{0.5cm}  
+
+\vspace{0.5cm}
+再考虑分支规则二。当分支规则一不能执行的时候，我们利用核心化算法对图$G \setminus \{u_1, u_2\}$进行收缩。
+获得了算法收缩后的新图$G'$，被算法取进该图顶点覆盖集的顶点集合$V_1$以及被算法排除出该图顶点覆盖集合的顶点集合$V_0$。
+而当顶点集合$V_1 \cup \{u_1, u_2\}$不是图G的独立集时候，我们应用分支规则二，产生了一个新的搜索分支。
+
+对于分支规则二产生的唯一搜索分支，由于应用核心化算法得到的新图$G'$满足全$\frac{1}{2}$函数是图$G'$上的Primal-$LPVC(G')$模型的唯一最优解，
+所以$vc^*(G_1) = \frac{\abs{V} - \abs{V_0} - \abs{V_1} - 2}{2}$。
+另外已经证明了$\abs{V_1} = \abs{V_0} - 1$。故，
+\begin{equation*} \begin{aligned}
+    \mu(G_1, k_1) & = k_1 - vc^*(G_1)  \\
+                  & = k_1 - \abs{V_1} - 2 - \frac{\abs{V} - \abs{V_0} - \abs{V_1} - 2}{2} \\
+                  & = k_1 - (\abs{V_0} - 1) - 2 - \frac{\abs{V} - \abs{V_0} - (\abs{V_0} - 1) - 2}{2} \\
+                  & = k - \frac{\abs{V}}{2} - \frac{1}{2} = \mu(G, k) - \frac{1}{2}
+\end{aligned} \end{equation*}
+更新分支规则二描述，如下；\\
+
+\begin{tabular}{ p{0.12\headwidth} | p{0.12\headwidth}p{0.66\headwidth} }
+  \multicolumn{3}{l}{ \textbf{分支规则 二：} }\\
+  \hline
+  \textbf{前提：}  & \multicolumn{2}{l}{顶点集合$V_1 \cup \{u_1, u_0\}\subseteq V$不是图$G$中的一个独立集}\\
+  \hline
+  \textbf{分支一：} & 问题实例：&$(G_1 \leftarrow G \setminus (V_0 \cup V_1 \cup \{u_0, u_1\}),\; k_1 \leftarrow k - \abs{V_1} - 2)$ \\
+                    & 参数：&$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$\\
+  \hline
+\end{tabular} \vspace{0.5cm}  
+
+\vspace{0.5cm}
+最后看回分支规则三。当分支规则一和二不满足应用条件的时候，该分支规则会被应用，并且类似规则一，也会分裂出两个新的搜索分支。
+对于分支一，同理于分支规则二的分支，可以得知$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$。
+对于分支二，我们先证明以下断言：
+\begin{claim}
+全$\frac{1}{2}$函数是图$G_2$上Primal-$LPVC(G_2)$模型的最优解，即$surplus(G_2) \ge 0$。
+\end{claim}
+\begin{proof}
+假设该断言不成立，即存在一个图$G_2$上的独立集满足$surplus_{G_2}(S) < 0$。
+显然顶点集合$S \cup V_0 \subseteq V$，是图G上的一个独立集，
+其在图G上的盈余值如下，
+\begin{equation*} \begin{aligned}
+  surplus_G(S \cup V_1) &\le surplus_{G_2}(S) + \abs{V_1}  - \abs{V_0} + 2 \\
+                        &= surplus_{G_2}(S) + 1 \le 0
+\end{aligned} \end{equation*}
+\end{proof}
 
