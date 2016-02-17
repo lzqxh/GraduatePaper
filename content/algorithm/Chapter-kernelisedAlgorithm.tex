@@ -4,11 +4,11 @@
 核心化技巧，是指通过多项式时间复杂度的算法将原本的参数化问题转化成一个规模更小（参数变小）的新问题，
 期间需要保证两个问题是等价的（其中一个问题存在解等价于另外一个存在解) 。
 这是固定参数算法(FPT)的设计过程中一个非常重要的技巧。
-最直观的角度上看，通过核心化技巧问题规模缩小了，显然有利于后续的求解。
+最直观的角度上看，通过核心化技巧可以缩小问题的规模，显然有利于后续的求解。
 同时当问题实例已经到不能进一步核心化的状态，
 那么可以从这一点上推导出当前实例很多特殊的性质。
 
-本节中的核心化算法时间复杂度是$O(n + m)$，会在每次运行分支算法之前被调用，
+本节中的核心化算法时间复杂度是$O(\abs{V} + \abs{E})$，会在每次运行分支算法之前被调用，
 以保证在分支算法运行的图中，全$\frac{1}{2}$函数是Primal-$LPVC(G)$问题的唯一最优解（$surplus(G) \ge 1$）。
 另外，我们要求核心化算法的输入中已经包含了求解当前图的Dual-$LPVC(G)$的网络W以及W上的最大可行流$f$，
 并且算法会构造并输出好基于新图的网络以及相应最大可行流。
@@ -36,25 +36,28 @@ Dual-$LPVC(G)$问题的最优半整数解，分别用$x$和$y$表示。
     &E^* = \{\{u, v\} \in E\;|\;u \in V^*\;and\;v\in V^*\}
 \end{aligned}\end{equation*}
 
-我们已经成功将图G收缩成了图$G^*$，接下来要考虑如何在快速构造出图$G^*$的LPVC最优解。
+我们已经成功将图G收缩成了图$G^*$，接下来要考虑如何在快速构造出图$G^*$上Dual-$LPVC(G)$模型的最优解。
 因为图$G^*$本质上是图G在顶点子集$V^x_{1/2}$上的导出子图，很自然的我们会猜想，
 是不是将函数$x,y$定义域收缩为$V^*$和$E^*$后就分别是图$G^*$上Primal-$LPVC(G)$与Dual-$LPVC(G)$的最优解。
 接下来，我们对该猜想进行证明。
 
 将函数$x,y$定义域分别限定为$V^*$以及$E^*$，
 获得函数$x^*:V^* \rightarrow \mathbb{R}$及$y^*:E^* \rightarrow \mathbb{R}$，
-即对任意图$G^*$上的顶点v，有$x^*_v=x_v$；对任意图$G^*$上的边e，有$x^*_e=x_e$。
+即对任意图$G^*$上的顶点v，有$x^*_v=x_v$；对任意图$G^*$上的边e，有$y^*_e=y_e$。
 \begin{claim}
 $x^*, y^*$分别是图$G^*$上Primal-$LPVC(G)$, Dual-$LPVC(G)$的半整数最优解。
 \end{claim}
 \begin{proof}
 因为$x, y$分别是图G上Primal-$LPVC(G)$， Dual-$LPVC(G)$的半整数最优解，
 显然$x^*, y^*$也应该分别是图$G^*$上Primal-$LPVC(G)$， Dual-$LPVC(G)$的半整数解。
-否则在图$G^*$上存在线形规划模型的约束条件不满足，而该条件在图$G$上也依然不满足，这与$x,y$作为最优解冲突。
+否则在图$G^*$上存在线形规划模型的约束条件不被函数$x^*$（或$y^*$）满足，而该条件在图$G$上也同样不被函数$x$（或$y$）不满足，这与$x$（或$y$）作为最优解冲突。
 
-根据定义可以知道，$x^*$是从$x$中移出掉$V^x_1$和$V^x_0$中顶点后获得的，故$val(x) - \abs{V^x_1} = val(x^*)$。
-另外，$y^*$相比$y$移除了所有与$V^x_1$相邻的边，即$val(y) - val(y^*) = \sum_{e \in (E \setminus E^*)}{y_e}
-\le \sum_{v \in V^x_1}{\sum_{e \in \delta(v)}{y_e}}\le\abs{V^x_1}$。
+根据定义可以知道，$x^*$是从$x$中移除掉定义域$V^x_1 \cup V^x_0$后获得的，故$val(x) - \abs{V^x_1} = val(x^*)$。
+另外，$y^*$定义域相比$y$移除了与$V^x_1$相邻的边集，即
+\begin{equation*} \begin{aligned}
+val(y) - val(y^*) & = \sum_{e \in (E \setminus E^*)}{y_e} 
+\\ & = \sum_{e \in \delta(V^x_1)}{y_e}  \le \sum_{v \in V^x_1}{\sum_{e \in \delta(v)}{y_e}}\le\abs{V^x_1}
+\end{aligned}\end{equation*}
 结合, $val(y) = val(x)$, 可知$val(y^*) \ge val(x^*)$。
 
 因此$x^*, y^*$分别是图$G^*$上Primal-$LPVC(G)$, Dual-$LPVC(G)$的解，且$val(y^*) \ge val(x^*)$，
@@ -71,27 +74,40 @@ $x^*, y^*$分别是图$G^*$上Primal-$LPVC(G)$, Dual-$LPVC(G)$的半整数最优
                 &= k - vc^*(G) = \mu(G, k)
 \end{aligned} \end{equation*}
 
-同时既然我们已经有了关于图$G^*$上Dual-$LPVC(G)$的最优解$y^*$，
-那么显然也可以在线性时间复杂度内构造出求解Dual-$LPVC(G^*)$的网络$W^*$的最大可行流。
+对于图$G^*$上求解Dual-$LPVC(G^*)$的网络$W^*$，
+因为图$G^*$是原来的图$G$的导出子图，所以根据定义\ref{NetworkDefintion}，网络$W^*$显然是原网络$W$的子网络。
+同时既然我们已经证明了$y^*$是图$G^*$上Dual-$LPVC(G^*)$模型的最优解，
+回顾\ref{TransformToNetwork}节里，Dual-$LPVC$模型的最优解与对应网络最大可行流之间关系，
+可以知道将网络$W$的最大可行流$f$定义域限定到子网络$W^*$的边集上便是网络$W^*$的最大可行流。
 
 \subsection{核心化算法阶段二}
-因为在上一节中已经将VCAL问题实例$(G, k)$收缩至使得全$\frac{1}{2}$函数是图$G$的LPVC最优解（不保证是唯一最优解），
+因为在上一节中已经将VCAL问题实例$(G, k)$收缩至使得全$\frac{1}{2}$函数是图$G$上Primal-$LPVC(G)$模型的最优解（不保证唯一性），
 并且构造出对应的网络$W$的最大流$f$。
-接下来在本阶段内，我们会对其问题进行进一步核心化，使得全$\frac{1}{2}$函数成为图$G$的LPVC\textbf{唯一半整数最优解}。
+接下来在本阶段内，我们会对其问题进行进一步核心化，使得全$\frac{1}{2}$函数成为图$G$上Primal-$LPVC(G)$模型的\textbf{唯一半整数最优解}。
+\vspace{0.5cm}
 
 首先，我们给出该阶段算法的基本思路。
 
 如果在当前图G满足$surplus(G) = 0$，根据定义可以找到图G的某个独立集$S \subseteq V$，使得$surplus(S) = 0$。
-构造函数$x':V \rightarrow \mathbb{R}$如下，对于$N(S)$中顶点令$x'_v = 1$; 对于$S$中顶点令$x'_v = 0$; 其他顶点$x'_v = \frac{1}{2}$。显然$x'$也是$G$的LPVC最优解。
-类似上一节，我们可以通过将$V^{x'}_1$（即$N(S)$）中顶点选进顶点覆盖集，来将问题实例从$(G,k)$收缩至$(G[V\setminus(S \cup N(S))], k - \abs{N(S)})$。
-重复寻找满足条件的独立集，收缩，直到在当前图G中$surplus(G) > 0$，则此时已经达到我们核心化的目标，全$\frac{1}{2}$函数已经是图$G$的LPVC唯一半整数最优解。
+构造函数$x':V \rightarrow \mathbb{R}$，如下：
+\begin{equation*}
+   \begin{cases}
+            x'_v =0, & \mbox{对于顶点$v \in S$；}  \\
+            x'_v =1, & \mbox{对于顶点$v \in N(S)$；}  \\
+            x'_v =\frac{1}{2}, & \mbox{其他。}
+          \end{cases}
+\end{equation*}
+显然$x'$也是$G$的LPVC最优解。
+类似上一阶段的做法，我们可以通过将$V^{x'}_1$（即$N(S)$）中顶点选进顶点覆盖集，来将问题实例从$(G,k)$收缩至$(G[V\setminus(S \cup N(S))], k - \abs{N(S)})$。
+重复寻找满足条件的独立集$S$，收缩，直到在当前图G中$surplus(G) > 0$，则此时已经达到我们核心化的目标，
+全$\frac{1}{2}$函数已经是图$G$上Primal-$LPVC(G)$模型的唯一半整数最优解。
 
 观察上诉思路，我们发现将算法改进到线性时间复杂度的瓶颈在于如何快速的找到图G中满足$surplus(S) = 0$的独立集$S$。
 为了突破该瓶颈，我们需要借助网络$W$在最大可行流$f$下的残余图$G_W(f)$。
 下面给出若干引理来揭示网络$W$在最大可行流$f$下的残余图$G_W(f)$与满足条件的独立集之间的关系。
 
-回忆网络W的构造，我们将原本图G中的顶点v，拆分成$l_v$和$r_v$两个顶点。
-为了描述的方便，此处引入几个新的集合的定义，假设$S_W \subseteq V_W$是网络W中图$G_W$的顶点子集，
+回忆网络W的构造（定义\ref{NetworkDefintion}），我们将原本图G中的每一个顶点v，拆分成有向图$G_W$里的$l_v$和$r_v$两个顶点。
+为了描述的方便，此处引入几个新的集合的定义，假设$S_W \subseteq V_W$是网络W中有向图$G_W$的顶点子集，
 令$S_L = \{v\;|\;l_v \in S_W\},S_R = \{v\;|\;r_v \in S_W\}$。
 注意此处，$S_W$是网络W中的顶点集合，而$S_L, S_R$是图G中的顶点集合。
 令$L_W = \{l_v \in V_W\}, R_W = \{r_v \in V_W\}$。假设$V' \subseteq V$是图G中顶点集合，
@@ -99,17 +115,24 @@ $x^*, y^*$分别是图$G^*$上Primal-$LPVC(G)$, Dual-$LPVC(G)$的半整数最优
 注意此处，$L_W, R_W, L_{V'}, R_{V'}$均是网络W中的顶点集合。
 
 \begin{lemma} \label{residualgraph1}
-对于网络W中图$G_W$的顶点子集$S_W \subseteq (L_W \cup R_W)$, 以下两个条件等价：
-（1）在网络W的残余图中$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边；
-（2）$N_G[S_L] = S_R$ 并且 $\abs{S_L} = \abs{S_R}$。
+对于网络W里有向图$G_W$的顶点子集$S_W \subseteq (L_W \cup R_W)$, 以下两个条件等价：
+\begin{itemize}
+  \item {（1）}在网络W的残余图中$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边；
+  \item {（2）}$N_G[S_L] = S_R$ 并且 $\abs{S_L} = \abs{S_R}$。
+\end{itemize}
+
+
 \end{lemma}
 \begin{proof}
   对于当前的图G，我们知道$vc^*(G) = \abs{V} / 2$，网络Ｗ最大可行流$f$的流量$F=2vc^*(G)=\abs{V}$。
   所以对于图G的任意顶点$v \in V$，显然有$f(s, l_v) = f(r_v, t) = 1$。
   假设$V' \subseteq V$，可得流入$L_{V'}$的流量等于流出$R_{V'}$的流量等于$\abs{V'}$。
-  回顾残余图的定义，其边有正向反向两种，这里我们也将$S_W$到$(L_W \cup R_W) \setminus S_W$的边分成两个集合，如下：
-  $E_L = \{(u, v) \in E_W\;|\;u \in S_W,v \in (L_W \cup R_W) \setminus S_W\}$，
-  $E_R = \{(v, u)\;|\;(u, v) \in E_W,f(u, v) > 0,u \in (L_W \cup R_W) \setminus S_W,v \in S_W\}$。
+  回顾残余图的定义，其边有正向反向两种，这里我们也将残余图$G_W(f)$中$S_W$到$(L_W \cup R_W) \setminus S_W$的边分成两个集合，如下：
+  \begin{equation*} \begin{aligned}
+    & E_L = \{(u, v) \in E_W\;|\;u \in S_W,v \in (L_W \cup R_W) \setminus S_W\} \\
+    & E_R = \{(v, u)\;|\;(u, v) \in E_W,f(u, v) > 0,u \in (L_W \cup R_W) \setminus S_W,v \in S_W\}
+  \end{aligned} \end{equation*}
+    
 
   $(1)\rightarrow (2)$: 假设条件（1）成立，等价于$E_L = E_R = \emptyset$。
   由$E_L = \emptyset$，可以知道所有$S_L$中顶点的邻居都在$S_R$中，既$N_G[S_L] \subseteq S_R$。
@@ -124,14 +147,23 @@ $x^*, y^*$分别是图$G^*$上Primal-$LPVC(G)$, Dual-$LPVC(G)$的半整数最优
   证毕。
 \end{proof}
 
-观察上述引理\ref{residualgraph1}中，我们发现条件(2)与是“$S_L$是满足surplus值为０的独立集”的弱化条件，
-接下来我们在两个条件中都增加约束，来获得更强的结论。
+观察上述引理\ref{residualgraph1}，我们发现条件(2)与是“$S_L$是满足surplus值为０的独立集”的弱化条件，
+接下来我们对引理\ref{residualgraph1}里的两个条件中都增加约束，来获得更强的结论。
+
+注意上文已经提及，对于图G的任意顶点$v \in V$，显然有$f(s, l_v) = c(s, l_v) = f(r_v, t) = f(r_v, t) = 1$。
+所以在残余图$G_W(f)$上，顶点$s,t$会构成单独两个非常特殊的强连通块。
+其中强连通块$\{t\}$会连向所有其他强连通块；所有其他强联通块会连向强连通块$\{s\}$，
+而这两个强连通块毫无意义。
+所以，后面我们讨论残余图$G_W(f)$上强连通块时候会排除掉这两个特殊的顶点。
+即，\textbf{实际上讨论的是有向图$G_W(f) \setminus \{s, t\}$上的强连通块}。
+
+
 \begin{lemma} \label{residualgraph2}
 如果网络W的流量残余图$G_W(f)$中，有一个尾强连通分量$S_W$满足$S_L \cap S_R = \emptyset$，
 那么$S_L$是图G中的一个独立集并且$\abs{S_L} = \abs{N_G(S_L)}$。
 \end{lemma}
 \begin{proof}
-$S_W$是$G_W(f)$中一个尾强连通分量等价于$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边。
+$S_W$是$G_W(f)$中一个尾强连通分量，可以推导出$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边。
 故依据引理\ref{residualgraph1}，可以获得$N_G[S_L] = S_R$ 并且 $\abs{S_L} = \abs{S_R}$。
 又因为$S_L \cap S_R = \emptyset$，可以得知$N_G(S_L) = N_G[S_L] = S_R$ 并且 $S_L$是图G中一个独立集。证毕。
 \end{proof}
@@ -144,70 +176,69 @@ $S_W$是$G_W(f)$中一个尾强连通分量等价于$G_W(f)$中不存在从$S_W$
 令$T$表示图G中满足$\abs{T} = \abs{N_G(T)}$的最小独立集。
 构造$S_W = L_T \cup R_{N_G(T)}$，根据定义$S_L = T, S_R = N_G(T)$。
 因为$T$是图G中满足$\abs{T} = \abs{N_G(T)}$的独立集，
-我们可以获得$N_G(T) = N_G[T] = N_G[S_L] = S_R$。
+我们可以获得$N_G(T) = N_G[T]$，即$N_G[S_L] = S_R$。
 可以进一步整理得引理\ref{residualgraph1}中的条件(2), $N_G[S_L] = S_R$ 并且 $\abs{S_L} = \abs{S_R}$。
-故$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边。
+故网络W在最大可行流$f$下的残余图$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边。
 
 假设$S_W$不是网络W在最大可行流$f$下的残余图$G_W(f)$中的强连通分量，
 则存在$S_W' \subset S_W$使得$G_W(f)$中不存在从$S_W'$到$S_W \setminus S_W'$的边。
 又因为之前已经发现$G_W(f)$中不存在从$S_W$到$(L_W \cup R_W) \setminus S_W$的边，
 两者结合可以进一步发现$G_W(f)$中不存在从$S_W'$到$(L_W \cup R_W) \setminus S_W'$的边。
 根据引理\ref{residualgraph2}，可以发现$S_L'$是图G中的一个独立集并且$\abs{S_L'} = \abs{N_G(S_L')}$。
-因为$S_W'$是$S_W$的真子集，故$S_L' \subset T$，这与T是满足$\abs{T} = \abs{N_G(T)}$的最小独立集矛盾。
+因为$S_W'$是$S_W$的真子集，故$S_L' \subset S_L = T$，这与T是满足$\abs{T} = \abs{N_G(T)}$的最小独立集矛盾。
 故假设不成立，$S_W$是网络W的残余图$G_W(f)$中的强连通分量。
 
-综上，$S_W$是网络W的残余图$G_W(f)$中的尾强连通分量，且$S_L \cap S_R = \emptyset$。
+综上，我们构造的顶点集合$S_W$是网络W的残余图$G_W(f)$中的尾强连通分量，且满足$S_L \cap S_R = \emptyset$。
 
 证毕。
 \end{proof}
 
-引理\ref{residualgraph2}和引理\ref{residualgraph3}，为我们提供了俄寻找图G中满足$surplus$值为0的独立集的方法。
+引理\ref{residualgraph2}和引理\ref{residualgraph3}，为我们提供了寻找图G中满足$surplus$值为0的独立集的方法。
 当我们从残余图$G_W(f)$中找到一个尾强连通分量$S_W$满足$S_L \cap S_R = \emptyset$，
 则可以判断$S_L$是图G的独立集，且满足$surplus(S_L) = 0$。
 通过将$N(S_L)$中顶点选进顶点覆盖集，可以获得新的VCAL问题实例如下，
-\[(G' = G[V \setminus (S_L \cup N(S_L))], k' = k - \abs{N(S_L)})\]
-对于求解图$G'$上Dual-$LPVC(G)$问题的网络$W'$，可以简单通过从原本网络W中删除点集$S_W$以及相应的边获得。
-现在剩下的唯一的问题就是，如何快速获得网络$W'$的最大可行流以及对应的新的残余图。
-为了解决该问题，这里给出下面结论：
+\[(G' \leftarrow G \setminus (S_L \cup N(S_L)),\; k' \leftarrow k - \abs{N(S_L)})\]
+对于求解图$G'$上Dual-$LPVC(G')$问题的网络$W'$，同理于上一阶段的证明，我们知道网络$W'$是网络$W$的子网络，
+并且网络$W'$的最大可行流$f'$，可以通过将原网络W的最大可行流$f$定义域缩小获得。
+现在剩下的唯一的问题就是，当前我们每一次找到一个满足盈余值为0的独立集，
+就需要重构一遍残余图，重新求解一次强连通分量。
+我们希望可以进一步优化，使得只求一次残余图的强连通分量便可以找出所有满足条件的独立集。
+为了解决该问题，我们需要分析当把某个顶点集$N(S_L)$选进当前顶点覆盖集后，新的网络最大流残余图$G_{W'}(f')$与之前的残余图$G_W(f)$之间关系。
+
+为了描述方便，令$T = S_L$，则$S_W = L_T \cup R_{N_G(T)}$。
+对比网络W与网络$W'$发现，除了移除顶点集合$L_T \cup R_{N_G(T)}$，还移除了顶点集合$L_{N_G(T)} \cup R_T$。
+
 \begin{claim}
-假设函数$f':E_W' \rightarrow \mathbb{R}$， 是通过将原网络W最大可行流$f$定义域限制为$E_W'$获得的，
-即对任意$e \in E_W'$有$f'_e = f_e$。
-\begin{itemize}
-  \item {（1）} $f'$是网络$W'$的最大可行流；
-  \item {（2）} 网络$W'$在流量$f'$下的残余图$G_W'(f')$等价于原残余图$G_W(f)$删除点集$S_W$以及相应的边。
-\end{itemize}
+在残余图$G_W(f)$中没有边从顶点集合$(L_W \cup R_W) \setminus (L_{N_G(T)} \cup R_T)$到顶点集合$L_{N_G(T)} \cup R_T$中。
 \end{claim}
 \begin{proof}
+首先我们将残余图$G_W(f)$中
+从顶点集合$L_{N_G(T)} \cup R_T$到顶点集合$(L_W \cup R_W) \setminus (L_{N_G(T)} \cup R_T)$中边分成两个集合，
+注意在网络W中，排除$s, t$后，只有从$L_W$到$R_W$的边。
+  \begin{equation*} \begin{aligned}
+    & E_L = \{(u, v) \in E_W\;|\;u \in L_W \setminus L_{N_G(T)},v \in R_T\} \\
+    & E_R = \{(v, u)\;|\;(u, v) \in E_W,f(u, v) > 0,u \in L_{N_G(T)},v \in R_W \setminus R_T\}
+  \end{aligned} \end{equation*}
+  
+回顾定义\ref{NetworkDefintion}，显然$E_L$为空集。
+同时由于$\abs{R_T} = \abs{L_{N_G(T)}}$，且$E_L$为空，
+所以所有从集合$L_{N_G(T)}$流出的流量都会流入集合$R_T$中，
+因此$E_R$也是空集。
 
-（1）
-首先在网络$W'$上，对任意边e，由于$f'(e), c'(e)$均继承于网络W，显然有$0 \le f'(e) \le c'(e)$。
-
-因为全$\frac{1}{2}$函数是图G的Primal-$LPVC(G)$最优解，所以网络W的最大可行流流量$F = 2 * val(x) = \abs{V}$。
-因此在网络W中，对于任何从源点s出发或者到达汇点t的边e有$f_e = 1$，显然该性质在$W', f'$中也成立。
-故在网络$W'$上
-\begin{equation*}
-    \sum_{e\in \delta^+(s)}{f'(e)} =\sum_{e\in \delta^-(t)}{f'(e)} = \abs{V'}
-\end{equation*}
-
-\textcolor[rgb]{1.00,0.00,0.00}{补充图}
-
-回顾引理\ref{residualgraph1}证明，
-我们已经证明了当残余图$G_W(f)$中不存在$S_W$到$(L_W \cup R_W) \setminus S_W$ 的边时候，
-$E_L = \{(u, v) \in E_W\;|\;u \in S_W,v \in (L_W \cup R_W) \setminus S_W\}=\emptyset$，
-$E_R = \{(v, u)\;|\;(u, v) \in E_W,f(u, v) > 0,u \in (L_W \cup R_W) \setminus S_W,v \in S_W\}=\emptyset$。
-所以从网络$W$上删除$S_W$以及相应边后，对于任何剩下的非$s, t$顶点，显然流入的流量以及流出的流量都没有改变。
-故在网络$W'$上有，
-\begin{equation*}
-    \sum_{e\in \delta^+(v)}{f'(e)}=\sum_{e\in \delta^-(v)}{f'(e)}\mbox{, 对于任何} v \in V' \setminus \{s, t\}
-\end{equation*}
-
-结合以上三点可知$f'$是网络$W'$上的可行流，又因为不可能存在更大的流，所以$f'$是网络$W'$上的最大可行流。
-
-（2）
-由网络$W'$以及其最大可行流$f'$的定义，显然可以得知$G_W'(f')$等价于原残余图$G_W(f)$删除点集$S_W$以及相应的边。
-
-证毕。
+故，$E_L = E_R = \emptyset$，证毕。
 \end{proof}
+
+对于残余图$G_W(f)$的所有强连通块，他们之间构成了拓扑关系。
+而新的残余图$G_{W'}(f')$与之对比，移除掉的强连通块要不就在拓扑关系的顶端（没有外部边可以到达顶点集合$L_{N_G(T)} \cup R_T$中）
+要不就在拓扑关系的末端（顶点集合$L_T \cup R_{N_G(T)}$是一个尾强连通块），
+而对于剩余强连通块，强连通性以及拓扑关系都没有受到影响！
+因此只需要在求出残余图$G_W(f)$的所有强连通块之后，利用逆拓扑顺序遍历每一个强连通块$S_W$，
+检查该强连通块是否不存在未被标记移除的后代以及是否满足$S_L \cap S_R = \emptyset$，
+如果两个条件都成立，则将顶点集合$L_T \cup R_{N_G(T)}$与顶点集合$L_T \cup R_{N_G(T)}$中的强连通块都标记为移除即可。
+
+至此我们给出了核心化算法阶段二的所有证明，下面分析时间复杂度。
+在整个核心化算法阶段二，其中我们只需要构造一个残余图，求出该残余图的所有强连通块，最后逆拓扑顺序遍历这些强连通块。
+显然每个步骤都是可以做到线性时间复杂度的，故整体时间复杂度为$O(\abs{V} + \abs{E})$。
 
 \subsection{完整核心化算法}
 \textcolor[rgb]{1.00,0.00,0.00}{need} 

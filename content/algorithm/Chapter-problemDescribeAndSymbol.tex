@@ -10,6 +10,7 @@
 对于无向图$G=(V,E)$, V是图G的顶点集合, E是图G的边集合, 令$n = \abs{V}$表示图的顶点数量, $m = \abs{E}$表示图的边数量。
 如果$e \in E$的两个端点分别为$u$和$v$，则使用集合$\{u, v \}$来表示边e。
 对于图顶点的某个子集$V' \subseteq V$, 我们定义图G的关于$V'$的导出子图为$G' = (V', E')$（简记为$G[V']$）, 其中$E' = \{\{u, v\} \in E\;|\;u \in V', v \in V' \}$。
+对于图G如下形式的导出子图$G[V \setminus V']$，我们有时会更加直观的写成$G \setminus V'$。
 
 设$v \in V$，定义由与v相邻的顶点构成的集合为$N_{G}(v) = \{ u \in V | \{u, v\} \in E\}$。
 同理对于$V' \subseteq V$, 定义$N_{G}(V') = (\bigcup_{u \in V'}N_{G}(u)) \setminus V' $。
@@ -18,6 +19,7 @@
 （注意，在前后文没有歧义的情况下，我们会简称这三个集合为$N(v), N(V'),N[V']$）
 
 另外在图中所有与顶点v相邻的边的集合，我们称之为$\delta(v)$。
+对于顶点集合$S$，与之相邻的边的集合，定义为$\delta(S) = \bigcup_{v \in S}\delta(v)$。
 
 \begin{definition}[顶点覆盖集]
 对于图$G(V, E)$, 若集合$V' \subseteq V$满足对于任意$\{u, v\} \in E$, $u \in V'$或者$v \in V'$, 则称$V'$是图G的一个顶点覆盖集。
@@ -39,7 +41,8 @@ $\delta^+(S)=\{(u, v) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
 
 \begin{definition}[强连通分量(strongly connected component)]
 在有向图$G(V, E)$中，若集合$S \subseteq V$满足对于任意$u, v \in S$都存在一条路径可以从$u$到达$v$，则称S是有向图G中的一个强连通分量。
-如果集合S同时满足$\delta^+(S) = \emptyset$, 则称S是有向图G的一个尾强连通分量(tail strongly connected component)。
+如果集合S同时满足$\delta^+(S) = \emptyset$, 则称S是有向图G的一个尾强连通分量（tail strongly connected component）；
+相反，如果集合S同时满足$\delta^-(S) = \emptyset$, 则称S是有向图G的一个头强连通分量（head strongly connected component）。
 \end{definition}
 
 在文献\cite{tarjan1972depth,sharir1981strong}中，已经分别给出了著名的Tarjan算法和Kosaraju算法。

@@ -152,29 +152,31 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 
 最后讨论剩余的情况，此时$V_1 \cup \{u_1, u_2\}$是图$G$中的一个独立集。
 
-因为$surplus_G(V_1 \cup \{u_1, u_2\}) \ge surplus(G) \ge 1$，所以独立集$V_1 \cup \{u_1, u_2\}$至少有两个邻居不在点集$V_0$中，
-即在图$G'$上，保留其至少两个邻居，这里我们取其中任意两个，设为$u_1', u_2'$。\\
+因为$surplus_G(V_1 \cup \{u_1, u_2\}) \ge surplus(G) \ge 1$，所以存在独立集$V_1 \cup \{u_1, u_2\}$的邻居不属于点集$V_0$，
+这里我们取其中一个这样子的邻居，设为$v'$，同时将某个与$v'$相邻的$V_1 \cup \{u_1, u_2\}$中的顶点记为$u_1'$。
+显然$v'$是在图$G'$上的，由于图$G'$满足$surplus(G') \ge 1$，所以$N_{G'}(v') \neq \emptyset$，
+取其中一个顶点$u_2' \in N_{G'}(v')$。\\
 
 \begin{tabular}{ p{0.9\headwidth} }
   \hline
   \textbf{分支规则 三 }\\
   \textbf{前提：} 顶点集合$V_1 \cup \{u_1, u_0\}\subseteq V$是图$G$中的一个独立集 \\
-  \textbf{分支一：} $(G_1 \leftarrow G',\; k_1 \leftarrow k - \abs{V_1} - 2)$\\
-  \textbf{分支二：} $(G_2 \leftarrow G' \setminus \{u_1', u_2'\},\; k_2 \leftarrow k - \abs{V_0} - 2)$\\
+  \textbf{分支一：} $(G_1 \leftarrow G \setminus \{v'\},\; k_1 \leftarrow k - 1$\\
+  \textbf{分支二：} $(G_2 \leftarrow G \setminus (V_1\cup V_0  \cup \{u_1, u_2, u_2'\}) ,\; k_2 \leftarrow k - \abs{V_1} - 3)$\\
   \hline
 \end{tabular} \vspace{0.5cm}
 
 为了证明分支规则三的正确性，同样我们此处也引进一个新的引理，如下：
 \begin{lemma} \label{SurplusOne2}
   对于图$G(V, E)$，假设$surplus(G) \ge 1$且存在独立集$S \subseteq V$满足$surplus(S) = 1$和$N(S)$是独立集，
-则或者存在一个图$G$的最小顶点覆盖，其包含所有$N(S)$中顶点；
-或者与之相反，存在一个图$G$的最小顶点覆盖其不包含所有$N(S)$中顶点。
+如果存在一个图$G$的最小顶点覆盖，其包含部分$N(S)$中顶点，
+那么也一定存在包含所有$N(S)$中顶点的图$G$的最小顶点覆盖。
 \end{lemma}
 \begin{proof}
 令顶点集合$VC$是图$G$的最小顶点覆盖集之一，将其分解为$VC = A \uplus B \uplus C$，
 其中$A \subseteq S$，$B \subseteq N(S)$且$C \cap (S \cup N(S)) = \emptyset$。
-显然当$A = \emptyset$时，$B = N(S)$；当时$B = \emptyset$时，$A = S$。
-因此我们只需要证明当顶点集合$A,B$同时非空时，可以构造出一新的图$G$的最小顶点覆盖使得其中一个集合为空。
+显然当$A = \emptyset$时，$B = N(S)$；当$B = \emptyset$时，$A = S$。
+因此我们只需要证明当顶点集合$A,B$同时非空时，可以构造出一新的图$G$的最小顶点覆盖包含所有$N(S)$中顶点。
 
 假设顶点集合$A,B$同时非空。同理于引理\ref{SurplusOne1}的证明，可以得知此时$\abs{A} + \abs{B} \ge \abs{S}　+ 1$。
 构造一新的顶点集合$VC' = N(S) \cup C$，显然$VC'$是图G的一个顶点覆盖，又因为$\abs{VC'} = \abs{C} + \abs{S} + 1 \le \abs{A} + \abs{B} + \abs{C} = \abs{VC}$，
@@ -183,19 +185,24 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 证毕。
 \end{proof}
 
-考虑在分支规则一与分支规则二均不能应用的情况下，
+由于顶点$u_1', u_2'$均是顶点$v'$的邻居，
+对于图G的最小顶点覆盖肯定满足（1）或者包含顶点$v'$；（2）或者包含顶点$u_1', u_2'$。
+根据这一点，类似于分支规则一我们也可以分裂出两个搜索分支。
+再考虑在分支规则一与分支规则二均不能应用的情况下，
 首先在我们应用分支规则的图$G$上已经有了$surplus(G) \ge 1$；
 其次当分支规则一不能应用时候，$V_0$是图G上盈余值为１的一个独立集；
 最后当分支规则二不能应用时候，$V_0$的邻居顶点集合$V_1 \cup \{u_1, u_2\}$是图$G$的一个独立集。
-所以依据引理\ref{SurplusOne2}，此时我们可以将原问题实例分成两个分支，
-其中一个将顶点集合$V_1 \cup \{u_1, u_2\}$先取进顶点覆盖集，
-另外一个将顶点集合$V_1 \cup \{u_1, u_2\}$的邻居先取进顶点覆盖集合。至此我们成功证明了分支规则三的正确性。
+所以依据引理\ref{SurplusOne2}，假设存在包含顶点$u_1' \in V \cup \{u_1, u_2\}$的最小顶点覆盖，
+则肯定也存在包含所有$V \cup \{u_1, u_2\}$中顶点的最小顶点覆盖。
+所以在分支二将$u_1', u_2'$提前取进顶点覆盖集，可以转化成将$V_1 \cup \{u_1, u_2, u_2'\}$中所有顶点取进顶点覆盖集。
+至此我们成功证明了分支规则三的正确性。
 
 接下来我们分析执行分支规则三的时间复杂度。
 根据我们的分类讨论情形，当分支规则一和二不能执行的时候，总会执行分支规则三，因此不需要额外测试是否执行该规则。
-在利用核心化算法构造$G'$的时候，已经求得其Dual-$LPVC(G')$模型的最优解。
-同时依据引理\ref{LemmaUpdateMaxflow}，可以在求解Dual-$LPVC(G')$模型的网络的最大可行流的基础上，
-在$O(2(\abs{V} + \abs{E}))$的时间负责度内构造分支二的对应的最大可行流。
+注意在利用核心化算法构造$G'$的时候，已经求得其Dual-$LPVC(G')$模型的最优解。
+同时分支一的图$G_1$是从图G中移除一个顶点$v'$获得的，分支二的图$G_2$是从图$G'$中移除顶点$u_2'$获得的，
+所以依据引理\ref{LemmaUpdateMaxflow}，我们分别可以在求解Dual-$LPVC(G)$，Dual-$LPVC(G')$模型的网络的最大可行流的基础上，
+在$O(\abs{V} + \abs{E})$的时间负责度内构造两个分支的对应的最大可行流。
 故，分支规则三也能在线性时间复杂度内被执行。
 
 \subsection{算法时间复杂度分析}
@@ -243,8 +250,8 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
 另外已经证明了$\abs{V_1} = \abs{V_0} - 1$。故，
 \begin{equation*} \begin{aligned}
     \mu(G_1, k_1) & = k_1 - vc^*(G_1)  \\
-                  & = k_1 - \abs{V_1} - 2 - \frac{\abs{V} - \abs{V_0} - \abs{V_1} - 2}{2} \\
-                  & = k_1 - (\abs{V_0} - 1) - 2 - \frac{\abs{V} - \abs{V_0} - (\abs{V_0} - 1) - 2}{2} \\
+                  & = k - \abs{V_1} - 2 - \frac{\abs{V} - \abs{V_0} - \abs{V_1} - 2}{2} \\
+                  & = k - (\abs{V_0} - 1) - 2 - \frac{\abs{V} - \abs{V_0} - (\abs{V_0} - 1) - 2}{2} \\
                   & = k - \frac{\abs{V}}{2} - \frac{1}{2} = \mu(G, k) - \frac{1}{2}
 \end{aligned} \end{equation*}
 更新分支规则二描述，如下；\\
@@ -260,19 +267,46 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
 \end{tabular} \vspace{0.5cm}  
 
 \vspace{0.5cm}
-最后看回分支规则三。当分支规则一和二不满足应用条件的时候，该分支规则会被应用，并且类似规则一，也会分裂出两个新的搜索分支。
-对于分支一，同理于分支规则二的分支，可以得知$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$。
-对于分支二，我们先证明以下断言：
-\begin{claim}
-全$\frac{1}{2}$函数是图$G_2$上Primal-$LPVC(G_2)$模型的最优解，即$surplus(G_2) \ge 0$。
-\end{claim}
-\begin{proof}
-假设该断言不成立，即存在一个图$G_2$上的独立集满足$surplus_{G_2}(S) < 0$。
-显然顶点集合$S \cup V_0 \subseteq V$，是图G上的一个独立集，
-其在图G上的盈余值如下，
+最后讨论分支规则三。当分支规则一和二不满足应用条件的时候，该分支规则会被应用，并且类似规则一，也会分裂出两个新的搜索分支。
+
+对于分支一，同理于分支规则一的分支一，可以得知$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$。
+对于分支二，注意图$G_2$是从图$G'$中移除定点$u_2'$获得的，而且图$G'$满足全$\frac{1}{2}$函数是图$G'$上的Primal-$LPVC(G')$模型的最唯一优解，
+所以$surplus(G') \ge 1$，$surplus(G_2) \ge 0$。因此我们知道$vc^*(G_2) = (\abs{V} - \abs{V_0} - \abs{V_1} - 3) / 2$。故，
 \begin{equation*} \begin{aligned}
-  surplus_G(S \cup V_1) &\le surplus_{G_2}(S) + \abs{V_1}  - \abs{V_0} + 2 \\
-                        &= surplus_{G_2}(S) + 1 \le 0
+    \mu(G_2, k_2) & = k_2 - vc^*(G_2)  \\
+                  & = k - \abs{V_1} - 3 - \frac{\abs{V} - \abs{V_0} - \abs{V_1} - 3}{2} \\
+                  & = k - \abs{V_1} - 3 - \frac{\abs{V} - (\abs{V_1} + 1) - \abs{V_1} - 3}{2} \\
+                  & = k - \frac{\abs{V}}{2} - 1 = \mu(G, k) - 1
 \end{aligned} \end{equation*}
+更新分支规则三描述，如下；\\
+
+\begin{tabular}{ p{0.12\headwidth} | p{0.12\headwidth}p{0.66\headwidth} }
+  \multicolumn{3}{l}{ \textbf{分支规则 三：} }\\
+  \hline
+  \textbf{前提：}  & \multicolumn{2}{l}{顶点集合$V_1 \cup \{u_1, u_0\}\subseteq V$不是图$G$中的一个独立集}\\
+  \hline
+  \textbf{分支一：} & 问题实例：&$(G_1 \leftarrow G \setminus \{v'\},\; k_1 \leftarrow k - 1)$ \\
+                    & 参数：&$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$\\
+  \hline
+  \textbf{分支二：} & 问题实例：&$(G_2 \leftarrow G \setminus (V_1\cup V_0  \cup \{u_1, u_2, u_2'\}) ,\; k_2 \leftarrow k - \abs{V_1} - 3)$\\
+                    & 参数：&$\mu(G_2, k_2) = \mu(G, k) - 1$\\
+  \hline
+\end{tabular} \vspace{0.5cm}  
+
+
+\begin{theorem}
+  整个算法可以在$O(2.618^{\mu}(\abs{V} + \abs{E}))$的时间复杂度内求解顶点覆盖问题。
+\end{theorem}
+\begin{proof}
+  由于我们的核心化算法保证问题实例的参数$\mu$不会增加，同时核心化算法和所有的分支规则都可以在$O(\abs{V} + \abs{E})$时间复杂度内完成，
+  所以为了证明该定理，只需要证明搜索树的节点个数不超过$O(2.618^{\mu})$。
+  
+  假设对于参数为$\mu$的问题实例，执行该分支算法遍历的搜索树节点数量为$T(\mu)$。
+  回顾我们三个分支规则，可以获得不等式，如下
+  \[ T(\mu) \le T(\mu - \frac{1}{2}) + T(\mu - 1) \]
+  解得$T(\mu) \le 2.618^{\mu}$。
+  
+  综上，搜索树的节点个数不超过$O(2.618^{\mu})$，每个节点只需要$O(\abs{V} + \abs{E})$的时间复杂度，总时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$。
 \end{proof}
 
+\subsection{}
