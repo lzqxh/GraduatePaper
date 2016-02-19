@@ -57,7 +57,7 @@
 之后我们考虑分支规则一不被执行的情形，即发现$vc^*(G \setminus \{u_1, u_2\}) < (\abs{V} - 2) / 2$。
 此时我们对于图$G \setminus \{u_1, u_2\}$执行\ref{KerneliseAlgorithm}节给出的核心化算法，
 设$G'$为图$G\setminus\{u_1, u_2\}$收缩后得到的新图，且已经被核心化算法取进顶点覆盖集的顶点集合为$V_1 \subseteq V$，
-已经被标记不属于定点覆盖集合的顶点集合为$V_0 \subseteq V$。
+已经被标记不属于顶点覆盖集合的顶点集合为$V_0 \subseteq V$。
 
 \begin{claim}
 对于顶点集合$V_1$, $V_0$有
@@ -67,7 +67,7 @@
 \end{itemize}
 \end{claim}
 \begin{proof}
-（1）构造一个图$G\setminus\{u_1, u_2\}$上Primal-$LPVC(G\setminus\{u_1, u_2\})$模型的解$ : V \setminus \{u_1, u_2\} \rightarrow \{0, \frac{1}{2}, 1\}$如下，
+（1）构造一个图$G\setminus\{u_1, u_2\}$上Primal-$LPVC(G\setminus\{u_1, u_2\})$模型的解$x^* : V \setminus \{u_1, u_2\} \rightarrow \{0, \frac{1}{2}, 1\}$如下，
 \begin{equation*}
    \begin{cases}
             x^*_v =0, & \mbox{对于顶点$v \in V_0$；}  \\
@@ -238,7 +238,7 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
   \textbf{分支二：} & 问题实例：&$(G_2 \leftarrow G \setminus \{u_1, u_2\},\; k_2 \leftarrow k - 2)$\\
                     & 参数：&$\mu(G_2, k_2) = \mu(G, k) - 1$\\
   \hline
-\end{tabular} \vspace{0.5cm}  
+\end{tabular} \vspace{0.5cm}
 
 \vspace{0.5cm}
 再考虑分支规则二。当分支规则一不能执行的时候，我们利用核心化算法对图$G \setminus \{u_1, u_2\}$进行收缩。
@@ -264,7 +264,7 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
   \textbf{分支一：} & 问题实例：&$(G_1 \leftarrow G \setminus (V_0 \cup V_1 \cup \{u_0, u_1\}),\; k_1 \leftarrow k - \abs{V_1} - 2)$ \\
                     & 参数：&$\mu(G_1, k_1) = \mu(G, k) - \frac{1}{2}$\\
   \hline
-\end{tabular} \vspace{0.5cm}  
+\end{tabular} \vspace{0.5cm}
 
 \vspace{0.5cm}
 最后讨论分支规则三。当分支规则一和二不满足应用条件的时候，该分支规则会被应用，并且类似规则一，也会分裂出两个新的搜索分支。
@@ -291,7 +291,7 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
   \textbf{分支二：} & 问题实例：&$(G_2 \leftarrow G \setminus (V_1\cup V_0  \cup \{u_1, u_2, u_2'\}) ,\; k_2 \leftarrow k - \abs{V_1} - 3)$\\
                     & 参数：&$\mu(G_2, k_2) = \mu(G, k) - 1$\\
   \hline
-\end{tabular} \vspace{0.5cm}  
+\end{tabular} \vspace{0.5cm}
 
 
 \begin{theorem}
@@ -300,13 +300,68 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
 \begin{proof}
   由于我们的核心化算法保证问题实例的参数$\mu$不会增加，同时核心化算法和所有的分支规则都可以在$O(\abs{V} + \abs{E})$时间复杂度内完成，
   所以为了证明该定理，只需要证明搜索树的节点个数不超过$O(2.618^{\mu})$。
-  
+
   假设对于参数为$\mu$的问题实例，执行该分支算法遍历的搜索树节点数量为$T(\mu)$。
   回顾我们三个分支规则，可以获得不等式，如下
   \[ T(\mu) \le T(\mu - \frac{1}{2}) + T(\mu - 1) \]
   解得$T(\mu) \le 2.618^{\mu}$。
-  
+
   综上，搜索树的节点个数不超过$O(2.618^{\mu})$，每个节点只需要$O(\abs{V} + \abs{E})$的时间复杂度，总时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$。
 \end{proof}
 
-\subsection{}
+\subsection{伪代码}
+首先给出引理\ref{LemmaUpdateMaxflow}对应伪代码如下：
+\begin{algorithm}
+\caption{引理\ref{LemmaUpdateMaxflow}算法}
+\begin{algorithmic}[1]
+\Require 图G对应的网络Ｗ及其最大流$f$，
+
+需要移除的顶点集合S
+\Ensure  图$G\setminus S$对应的网络$W'$及其最大流$f'$
+\Function{MaintainMF}{$W, f, S$}
+    \State $f' \gets \text{在最大流f的基础进行退流操作，移除所有经过顶点集合$\{l_v, r_v\;|\;v \in S\}$的流量}$
+    \State $W' \gets \text{在网络W的基础上移除顶点集合$\{l_v, r_v\;|\;v \in S\}$以及相应的边}$
+    \State $f' \gets \text{将网络$W'$可行流$f'$增广至最大流}$
+    \State \Return $W', f'$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{完整求解VCAL问题的分支算法}
+\begin{algorithmic}[1]
+\Require VCAL问题实例$(G,k)$, 图G对应的网络Ｗ及其最大流$f$
+\Ensure  VCAL问题实例$(G,k)$ 的答案是"YES" 或者 “NO”
+\Function{VCAL-All}{$G, k, W, f$}
+    \State $(G, k, W, f, VC_1, VC_0) \gets Kernelise(G, k, W, f)$
+    \Comment 调用核心化算法进行核心化
+    \State $\mu \gets k - F / 2$
+
+    \If {$\mu < 0$} \Return False \Comment 搜索的终止条件
+    \ElsIf {图G中已经没有顶点} \Return True
+    \EndIf
+    
+    \State 从图$G$中任意取一个顶点$v \in V(G)$ \Comment 分支规则一
+    \State 从v的邻居$N(v)$中任意取两个顶点$u_1, u_2 \in N(v)$
+    \State $W', f' \gets MaintainMF(W, f, \{u_1, u_2\})$
+    \If {$F(f') = \abs{V} - 2$} 
+        \State $branchA \gets \text{VCAL-All}(G\setminus\{v\}, k - 1, MaintainMF(W, f, \{v\}))$
+        \State $branchB \gets \text{VCAL-All}(G\setminus\{u_1, u_2\}, k - 2, W', f'))$
+        \State \Return $branchA \vee branchB$
+    \EndIf
+    
+    \State $(G', k', W', f', V_1, V_0) \gets Kernelise(G\setminus\{u_1, u_2\}, k - 2, W', f')$ 
+    \State $V_1 \gets V_1 \cup \{u_1, u_2\}$
+    \If {$V_1$不是图G中的独立集} \Comment 分支规则二
+        \State \Return $\text{VCAL-All}(G', k', W', f')$
+    \EndIf
+    
+    \State 从图$G'$中任意取一个顶点$v' \in N_G(V_1)$ \Comment 分支规则三
+    \State 从图$G'$中任意取一个顶点$u_2' \in N_{G'}(v')$
+    \State $branchA \gets \text{VCAL-All}(G\setminus\{v'\}, k - 1, MaintainMF(W, f, \{v'\}))$
+    \State $branchB \gets \text{VCAL-All}(G'\setminus\{u_2'\}, k' - 1, MaintainMF(W', f', \{u_2'\}))$
+    \State \Return $branchA \vee branchB$
+    
+\EndFunction
+\end{algorithmic}
+\end{algorithm} 

@@ -55,7 +55,7 @@ $x^*, y^*$分别是图$G^*$上Primal-$LPVC(G)$, Dual-$LPVC(G)$的半整数最优
 根据定义可以知道，$x^*$是从$x$中移除掉定义域$V^x_1 \cup V^x_0$后获得的，故$val(x) - \abs{V^x_1} = val(x^*)$。
 另外，$y^*$定义域相比$y$移除了与$V^x_1$相邻的边集，即
 \begin{equation*} \begin{aligned}
-val(y) - val(y^*) & = \sum_{e \in (E \setminus E^*)}{y_e} 
+val(y) - val(y^*) & = \sum_{e \in (E \setminus E^*)}{y_e}
 \\ & = \sum_{e \in \delta(V^x_1)}{y_e}  \le \sum_{v \in V^x_1}{\sum_{e \in \delta(v)}{y_e}}\le\abs{V^x_1}
 \end{aligned}\end{equation*}
 结合, $val(y) = val(x)$, 可知$val(y^*) \ge val(x^*)$。
@@ -132,7 +132,7 @@ val(y) - val(y^*) & = \sum_{e \in (E \setminus E^*)}{y_e}
     & E_L = \{(u, v) \in E_W\;|\;u \in S_W,v \in (L_W \cup R_W) \setminus S_W\} \\
     & E_R = \{(v, u)\;|\;(u, v) \in E_W,f(u, v) > 0,u \in (L_W \cup R_W) \setminus S_W,v \in S_W\}
   \end{aligned} \end{equation*}
-    
+
 
   $(1)\rightarrow (2)$: 假设条件（1）成立，等价于$E_L = E_R = \emptyset$。
   由$E_L = \emptyset$，可以知道所有$S_L$中顶点的邻居都在$S_R$中，既$N_G[S_L] \subseteq S_R$。
@@ -219,7 +219,7 @@ $S_W$是$G_W(f)$中一个尾强连通分量，可以推导出$G_W(f)$中不存�
     & E_L = \{(u, v) \in E_W\;|\;u \in L_W \setminus L_{N_G(T)},v \in R_T\} \\
     & E_R = \{(v, u)\;|\;(u, v) \in E_W,f(u, v) > 0,u \in L_{N_G(T)},v \in R_W \setminus R_T\}
   \end{aligned} \end{equation*}
-  
+
 回顾定义\ref{NetworkDefintion}，显然$E_L$为空集。
 同时由于$\abs{R_T} = \abs{L_{N_G(T)}}$，且$E_L$为空，
 所以所有从集合$L_{N_G(T)}$流出的流量都会流入集合$R_T$中，
@@ -241,4 +241,42 @@ $S_W$是$G_W(f)$中一个尾强连通分量，可以推导出$G_W(f)$中不存�
 显然每个步骤都是可以做到线性时间复杂度的，故整体时间复杂度为$O(\abs{V} + \abs{E})$。
 
 \subsection{完整核心化算法}
-\textcolor[rgb]{1.00,0.00,0.00}{need} 
+
+\begin{algorithm}
+\caption{完整核心化算法}
+\begin{algorithmic}[1]
+\Require VCAL问题实例$(G,k)$, 图G对应的网络Ｗ及其最大流$f$
+\Ensure  核心化后的VCAL问题实例$(G',k')$，图$G'$对应的网络$W'$及其最大流$f'$，被取进顶点覆盖的顶点集合$S_1$,
+        ，被排除出顶点覆盖的顶点集合$S_0$
+\algrule
+\Function{Kernelise}{$G, k, W, f$}
+    \State $S_0 \gets \emptyset$
+    \State $S_1 \gets \emptyset$ 
+    \State \Comment 核心化算法阶段一
+    \State 根据网络W在最大可行流$f$，构造图$G$的Primal-$LPVC(G)$最优解$x$
+    
+    \State $G_1 \gets G[V^x_{1/2}],\;k_1 \gets k - \abs{V^x_1}$
+    \State $S_1 \gets S_1 \cup V^x_1$
+    \State $S_0 \gets S_0 \cup V^x_0$
+    \State $W_1 \gets \text{从网络W中移除顶点集合}\{l_v, r_v | v \in V^x_1 \cup V^x_0\}\text{以及相关边}$
+    \State $f_1 \gets \text{将流量函数$f$定义域限定到网络$W'$的边集上}$
+    
+    \State \Comment 核心化算法阶段二
+    \State 构造网络$W_1$在最大可行流$f_1$下的流量残余图$G_{W_1}(f_1)$   
+    \State $K \gets \text{求解图$G_{W_1}(f_1) \setminus \{s, t\}$的所有强连通块}$
+    
+    \For {按逆拓扑顺序遍历K中每一个强连通块$T\in K$}
+        \If {强连通块$T$不存在未被标记的后代\; \textbf{and}\;$\{v\;|\;l_v \in T, r_v \in T\} = \emptyset$}
+            \State $S_0 \gets S_0 \cup \{v\;|\;l_v \in T\}$
+            \State $S_1 \gets S_1 \cup \{v\;|\;r_v \in T\}$
+            \State 标记强连通块T
+        \EndIf
+    \EndFor
+    \State $G_2 \gets G \setminus (S_0 \cup S_1),\;k_2 \gets k - \abs{S_1}$
+    \State $W_2 \gets \text{从网络W中移除顶点集合}\{l_v, r_v | v \in S_1 \cup S_0\}\text{以及相关边}$
+    \State $f_2 \gets \text{将流量函数$f$定义域限定到网络$W_2$的边集上}$
+    
+    \State \Return $(G_2, k_2, W_2, f_2, S_1, S_0)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm} 

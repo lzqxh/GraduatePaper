@@ -1,4 +1,4 @@
-\chapter{顶点覆盖问题的线性固定参数算法}
+\chapter{基于线性松弛下界的线性固定参数算法}
 \section{引言}
 顶点覆盖问题(Vertex Cover, 缩写为VC),即对于参数k，询问给定图中是否存在大小满足k的顶点集合满足：对于图中任意一条边的两个端点至少有一个在该集合中。
 该问题是最早被提出来的21个NP-complete问题之一\cite{karp1972reducibility}，也是最早证明是固定参数可解(Fixed parameter tractable)的问题\cite{downey2012parameterized}。
@@ -37,7 +37,7 @@
 用$\delta^+(v)=\{(v, u) \in E\;|\;u \in V\}$来表示所有从顶点v出发的边的集合。
 同样我们将这两个定义扩展到有向图G中的顶点集合, 令$S \subseteq V$,
 则$\delta^-(S)=\{(u, v) \in E\;|\;u \notin S, v \in S\}$表示所有进入S的边的集合,
-$\delta^+(S)=\{(u, v) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边的集合。
+$\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边的集合。
 
 \begin{definition}[强连通分量(strongly connected component)]
 在有向图$G(V, E)$中，若集合$S \subseteq V$满足对于任意$u, v \in S$都存在一条路径可以从$u$到达$v$，则称S是有向图G中的一个强连通分量。
@@ -46,24 +46,25 @@ $\delta^+(S)=\{(u, v) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
 \end{definition}
 
 在文献\cite{tarjan1972depth,sharir1981strong}中，已经分别给出了著名的Tarjan算法和Kosaraju算法。
-这两个算法都能在线性时间复杂度（即$O(n + m)$）内求得有向图的所有强连通分量，包括尾强连通分量。
-因为他们都是计算机领域非常重要且经典的算法，本文默认读者都已经对其有一定了解，后续不再进行展开，而是直接使用结论：\textbf{求有向图的尾强连通分量可以在线性时间复杂度（$O(n + m)$）内完成}。
+这两个算法都能在线性时间复杂度（即$O(n + m)$）内求得有向图的所有强连通分量。
+因为他们都是计算机领域非常重要且经典的算法，本文默认读者都已经对其有一定了解，后续不再进行展开，而是直接使用结论：\textbf{求有向图所有强连通分量可以在线性时间复杂度（$O(n + m)$）内完成}。
 
 接下来我们给出网络及其流的定义。
 
-在图论中，网络是指一个边带权有向图，即有向图$G(V, E)$加上一个边的权值函数$c: E \rightarrow \mathbb{N}^+$（在网络中又称容量函数）。
+在图论中，网络是指一个边带权的有向图，即有向图$G(V, E)$加上一个边的权值函数$c: E \rightarrow \mathbb{N}^+$（在网络中又称容量函数）。
 对于V中的两个顶点$s, t \in V$，一个可行s-t流（在上下文没有歧义的情况下，简称可行流），是指一个从边集到正整数集的映射$f: E \rightarrow \mathbb{N}^+$ 满足：
 \begin{equation} \label{EquationFlow} \begin{aligned}
   \sum_{e\in \delta^+(s)}{f(e)}&=\sum_{e\in \delta^-(t)}{f(e)}& \\
   \sum_{e\in \delta^+(v)}{f(e)}&=\sum_{e\in \delta^-(v)}{f(e)}, & v &\in V \setminus \{s, t\} \\
   0 \le f(e) &\le c(e), & e &\in E \\
 \end{aligned} \end{equation}
-一般我们用$F=\sum_{e\in \delta^+(s)}{f(e)}$来表示可行流的流量。
-最后，网络$(G, c)$在流量$f$下的残余图，我们用有向图$G(f)$来表示，其中：
+一般我们用$F(f)=\sum_{e\in \delta^+(s)}{f(e)}$来表示可行流的流量。
+
+最后，定义网络$(G, c)$在可行流$f$下的流量残余图，我们用有向图$G(f)$来表示：
 \begin{equation*} \begin{aligned}
   G(f) = &(V, E(f)) \\
-  E(f) = &\{(u,v)\;|\;(u, v) \in E\;and\;f(u, v) < c(u, v)\} \cup \\
-  &\{(v,u)\;|\;(u, v) \in E\;and\;f(u, v) > 0\}
+  E(f) = &\{(u,v)\;|\;(u, v) \in E,\;f(u, v) < c(u, v)\} \cup \\
+  &\{(v,u)\;|\;(u, v) \in E,\;f(u, v) > 0\}
 \end{aligned} \end{equation*}
 
 在文献\cite{ford1962flows}, 已经给出著名的Ford-Fulkerson算法。本文也不打算对其进行展开，这里直接给出结论：
@@ -89,8 +90,8 @@ $\delta^+(S)=\{(u, v) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
    & 0 \le x(u) \le 1, & u \in V
 \end{aligned} \end{equation}
 
-这里我们用$LPVC$来表示基于线性规划松弛的顶点覆盖问题，
-用$vc^{*}(G)$来表示基于线性规划松弛的顶点覆盖问题的最优解的值。
+这里我们用$LPVC(G)$来表示线性规划松弛后的顶点覆盖问题，
+用$vc^{*}(G)$来表示线性规划松弛后的顶点覆盖问题的最优解的值。
 显然，$vc(G) \ge vc^*(G)$。这里$vc^{*}(G)$是最小顶点覆盖的一个下界，我们称之为\textbf{线性松弛下界}。
 
 如果某个函数$x:V \rightarrow \mathbb{R}$， 满足上述模型中的所有约束条件，则x被称为$LPVC(G)$的一个解。
@@ -101,14 +102,14 @@ $\delta^+(S)=\{(u, v) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
 
 
 早在19世纪80年代，纯粹的线性规划问题已经被证明是可以在多项式时间内求解的\cite{khachiian1979polynomial}。显然$vc^{*}(G)$也可以在多项式时间内获得。
-这里尽管由于基于线性规划松弛的顶点覆盖问题中顶点的取值可以是分数，我们不能将$LPVC$的解直接转化成顶点覆盖问题的解，
+这里尽管由于线性规划松弛后的顶点覆盖问题中顶点的取值可以是分数，我们不能将$LPVC$的解直接转化成顶点覆盖问题的解，
 但是松弛后的线性规划问题还是为原问题的近似算法以及固定参数算法的设计提供了很多有价值的参考。下面我们给出若干$LPVC$的已经被证明的性质。
 \begin{lemma}[\cite{nemhauser1975vertex}]
 对于图$G(V, E)$, 总是存在一个LPVC(G)的最优解$x$, 对于所有的$v \in V$ 满足$x(v) \in \{0, \frac{1}{2}, 1\}$。
 我们称x为LPVC(G)的一个半整数最优解，如果对于所有的$v \in V$有$x(v) = \frac{1}{2}$, 则称x是LPVC的全$\frac{1}{2}$最优解。
 \end{lemma}
 
-在后续章节中因为我们总是处理LPVC(G)的半整数解，所以默认情况下我们说x是LPVC(G)的解是指x是LPVC(G))的半整数解。
+在后续章节中因为我们总是处理LPVC(G)的半整数解，所以默认情况下我们说x是LPVC(G)的解是指x是LPVC(G)的半整数解。
 同时为了更清晰的使用LPVC(G)的半整数解，我们约定对于$i \in \{0, \frac{1}{2}, 0\}$使用$V^x_i$表示集合$\{v \in V\;|\; x(v) = i\}$。
 
 \begin{lemma}[\cite{nemhauser1975vertex}]\label{relationBwtVCAndLPVC}
@@ -131,7 +132,7 @@ $\delta^+(S)=\{(u, v) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
 当且仅当$k \ge vc^*(G)$, 固定参数算法才是非平凡的。显然此处会很自然的考虑是不是所求顶点覆盖集大于$vc^*(G)$的部分才有实际意义，
 能不能以\textbf{\emph{所求顶点覆盖集大小减去$vc^*(G)$的值}}作为参数。
 
-现给出基于线性松弛下界的顶点覆盖参数化问题(VERTEX COVER ABOVE LP, 简称VCAL)的完整定义。\\
+现给出基于线性松弛下界的参数化顶点覆盖问题(VERTEX COVER ABOVE LP, 简称VCAL)的完整定义。\\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline

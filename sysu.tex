@@ -21,6 +21,17 @@
 \usepackage{booktabs}
 \usepackage{amsmath,amssymb}
 
+
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algpseudocode}
+%\usepackage[noend]{algpseudocode}
+
+
+\renewcommand{\algorithmicrequire}{ \textbf{Input:}} %Use Input in the format of Algorithm
+\renewcommand{\algorithmicensure}{ \textbf{Output:}} %UseOutput in the format of Algorithm
+\newcommand{\algrule}[1][.2pt]{\par\vskip.5\baselineskip\hrule height #1\par\vskip.5\baselineskip}
+
 \input{setup/package}
 \input{setup/format}
 
@@ -29,7 +40,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%设置区%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %此处填入中文论文题目
-\newcommand{\ctitle}{基于机器学习的因特网流量分类研究}
+\newcommand{\ctitle}{顶点覆盖问题的固定参数算法研究}
 %此处填入英文论文题目
 \newcommand{\etitle}{Network Traffic Classification Based on Machine Learning}
 %此处填入作者中文名
@@ -57,7 +68,7 @@
 %\include{abstract/abstract_cn}    %**********中文摘要
 %\include{abstract/abstract_en}    %**********英文摘要
 %
-%\include{setup/content}    %***********生成目录
+\include{setup/content}    %***********生成目录
 %
 \input{setup/setchapter}    %**********设置章标题显示格式
 %

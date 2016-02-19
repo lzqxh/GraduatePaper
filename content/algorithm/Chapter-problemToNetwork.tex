@@ -34,9 +34,9 @@
 
 \subsection{将Dual-$LPVC(G)$转化成最大网络流问题} \label{TransformToNetwork}
 本节中我们首先将根据图$G(V, E)$构造一个网络W。
-之后并通过证明任意一个网络W上的可行流与一组满足Dual-$LPVC(G)$约束的向量y一一对应且$F = 2val(y)$，
-来证明求Dual-$LPVC(G)$的最优解等价与求解该网络上的最大流。
-最后，我们给出通过最大可行流构造Primal-$LPVC(G)$与Dual-$LPVC(G)$最优解的方法。
+之后并通过证明任意一个网络W上的可行流$f$与一个Dual-$LPVC(G)$模型的解$y$一一对应且$F(f) = 2val(y)$，
+来证明求Dual-$LPVC(G)$模型的最优解等价与求解该网络上的最大流。
+最后，我们给出通过网络$W$最大可行流构造Primal-$LPVC(G)$与Dual-$LPVC(G)$最优解的方法。
 
 求解Dual-$LPVC(G)$的网络定义如下：
 \begin{definition} \label{NetworkDefintion}
@@ -53,7 +53,7 @@
 \end{definition}
 
 \begin{property}
-图G上的一个满足Dual-$LPVC(G)$约束的函数y,对应网路W上的一个流量为$2val(y)$的可行流。
+图G上的一个Dual-$LPVC(G)$模型的解$y$,对应网路W上的一个流量为$2val(y)$的可行流。
 \end{property}
 \begin{proof}
   首先，我们构造一个流量函数$f:E_W \rightarrow \mathbb{N}$, 如下：
@@ -62,21 +62,22 @@
     f(l_u, r_v) = y_e, & \mbox{for } \{u, v\} \in E.
   \end{cases}\end{aligned}\end{equation*}
   回顾可行流需要满足的条件(式子\ref{EquationFlow}), 首先由Dual-$LPVC(G)$的约束可以得到，
-  $0 \le f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e} \le 1 = c(e)$。
+  $0 \le f(s, l_v) = f(r_v, t) = \sum\limits_{e \in \delta(v)}{y_e} \le 1$。
   其次，对于任意$v \in V$ 显然,
   \[ \begin{aligned}
-     \sum_{e\in \delta^+(l_v)}{f(e)} = f(s, l_v) = \sum\limits_{e \in \delta(v)}{y_e} = \sum_{\{v, u\} \in E}{f(l_v, r_u)} = \sum_{e\in \delta^-(l_v)}{f(e)} \\
-    \sum_{e\in \delta^+(r_v)}{f(e)} = \sum_{\{v, u\} \in E}{f(l_u, r_v)}  = \sum\limits_{e \in \delta(v)}{y_e} = f(r_v, t) = \sum_{e\in \delta^-(r_v)}{f(e)}
+     \sum_{e\in \delta^+(l_v)}{f(e)} = f(s, l_v) = \sum\limits_{e \in \delta(v)}{y_e} = \sum_{u \in N(v)}{f(l_v, r_u)} = \sum_{e\in \delta^-(l_v)}{f(e)} \\
+    \sum_{e\in \delta^+(r_v)}{f(e)} = \sum_{u \in N(v)}{f(l_u, r_v)}  = \sum\limits_{e \in \delta(v)}{y_e} = f(r_v, t) = \sum_{e\in \delta^-(r_v)}{f(e)}
   \end{aligned} \]
   综上$f$是网络W上的一个\textbf{可行流}, 其流量$F = 2\sum_{e \in E}{y_e} = 2val(y)$（每条边上的$y_e$被计入两次）。证毕。
 \end{proof}
 
 \begin{property}
-网络W上的一个可行流$f$，对应一个图G上满足Dual-$LPVC(G)$约束的函数y,且$val(y) = \frac{F}{2}$。
+网络W上的一个可行流$f$，对应一个图G上Dual-$LPVC(G)$模型的解$y$,且$val(y) = \frac{F}{2}$。
 \end{property}
 \begin{proof}
 构造y如下，$y_{e = \{u, v\}} = \frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))$。
-此时对于任意顶点$v \in V$, $\sum\limits_{e \in \delta(v)}{y_e} = \sum\limits_{\{u, v\}\in E}{\frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))} \le \frac{1}{2}(c(s, l_v) + c(r_v, t)) = 1$。
+此时对于任意顶点$v \in V$有, 
+\[\sum\limits_{e \in \delta(v)}{y_e} = \sum\limits_{u \in N(v)}{\frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))} \le \frac{1}{2}(c(s, l_v) + c(r_v, t)) = 1\]
 因此y满足Dual-$LPVC(G)$约束。
 
 另外显然$val(y) = \sum_{e \in E}{y_e} = \frac{1}{2}\sum\limits_{\{u, v\}\in E}{(f(l_u, r_v) + f(l_v, r_u))} = \frac{F}{2}$。证毕。
