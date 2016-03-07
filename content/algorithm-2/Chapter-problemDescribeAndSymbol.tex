@@ -1,98 +1,50 @@
-\chapter{基于Lov{\'a}sz-Plummer下界的参数化顶点覆盖问题}
+\chapter{反馈顶点集问题的固定参数算法}
+反馈顶点集问题(Feedback Vertex Set, 缩写为FVS),即对于参数k，询问给定图中是否存在大小满足k的顶点集合满足：
+对于图中任意一条环都与这个顶点集有交集。
+与顶点覆盖问题类似，该问题也是最早被提出来的21个NP-complete问题之一\cite{karp1972reducibility}。
 
+本章提出了一个时间复杂度为$\mathcal{O}(2.554^k)$的固定参数算法。
 \section{相关术语及问题的定义}
 
-\subsection{基于Lov{\'a}sz-Plummer下界的参数化顶点覆盖问题定义}
-在上一大章中，我们优化了基于线性松弛下界的参数化顶点覆盖问题，提出了一个更快的线性固定参数算法。
-然而，实际上关于顶点覆盖值还存在着其他下界，比如说图的最大匹配数（简称，$MM(G)$），Lov{\'a}sz-Plummer下界（等于$2vc^*(G) - MM(G)$）。
-关于这个两个下界也引申出类似的参数化顶点覆盖问题，如：\\
+本章里我们会继续沿用上一大章中关于图的符号和术语。同时，在本节中我们会继续扩充一些会使用到的术语，
+并且给出相关问题更加具体的数学的定义。
+\subsection{有关图的一些术语的定义}
+首先给出无向图上一些常见名词的定义，如环，树和森林等。
+\begin{definition}[环]
+对于无向图$G(V,E)$，假设存在一个顶点序列$v_1v_2...v_n$，使得$\{v_0, v_n\} \in E$并且对于任意$0 \le i < n$有$\{v_i, v_{i+1}\} \in E$。
+则该序列为图G上的一个\textbf{环}。如果该序列中没有重复顶点，则称之为图G的一个\textbf{简单环}。
+\end{definition}
+
+\begin{definition}[树(tree)和森林(forest)]
+对于无向图$G(V,E)$，如果其中不存在任何环，则我们称图G为一个\textbf{森林(forest)}。
+同时如果图G是联通的，则其也被称为\textbf{树(tree)}。
+\end{definition}
+
+\begin{definition}[反馈顶点集]
+对于图$G(V, E)$, 若集合$V' \subseteq V$使得$G \setminus V'$中不存在任何环（即，图$G \setminus V'$是森林）, 
+则称$V'$是图G的一个\textbf{反馈顶点集}（Feedback Vertex Set, 简称$FVS$）。
+\end{definition}
+
+\subsection{参数化反馈顶点集问题}
+对于一般图来说，回答是否存在大小不超过k的反馈顶点集，是非常经典组合优化问题。
+在该问题上，固定参数算法是常用来求解答案的方法。
+具体参数化反馈顶点集问题表述如下：\\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
-  基于最大匹配下界的参数化顶点覆盖问题\\(Above-Guarantee Vertex Cover，简称AGVC) \\
+  参数化反馈顶点集问题(Feedback Vertex Set，简称FVS) \\
   \textbf{输入：} 图$G(V, E)$及整数k \\
-  \textbf{参数：} $\tilde{\mu} = k - MM(G)$\\
-  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \textbf{参数：} $k$\\
+  \textbf{问题：} 图G中是否存在一个反馈顶点集合，其大小不超过k\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
 
+在参数计算领域，参数化FVS也是其中一个非常重要的问题，
+一系列的研究一直在不停的改进其下限，如文献\cite{bodlaender1994disjoint,downey1992fixed,downey2012parameterized,raman2006faster,kanj2004parameterized,dehne20072o,guo2006compression,chen2008improved,cao2010feedback,cygan2011solving,kociumaka2014faster} 等。
 
-\begin{tabular}{| p{0.9\headwidth} |}
-  \hline
-  基于Lov{\'a}sz-Plummer下界的参数化顶点覆盖问题\\(Vertex Cover Above Lov$\acute{a}$sz-Plummer，简称VCAL-P) \\
-  \textbf{输入：} 图$G(V, E)$及整数k \\
-  \textbf{参数：} $\hat{\mu} = k - (2vc^*(G) - MM(G))$\\
-  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
-  \hline
-\end{tabular} \vspace{0.5cm} \\
-
-在经典匹配理论中，Lov{\'a}sz和Plummer\upcite{lovasz2009matching} 已经证明了
-\begin{itemize}
-  \item[（1）]$2vc^*(G) - MM(G) \le vc(G)$；
-  \item[（2）]$2vc^*(G) - MM(G) \ge vc^*(G) \ge MM(G)$。
-\end{itemize}
-这里利用上诉结论，对比VCAL，AGVC，VCAL-P三个问题的参数显然有，\[\tilde\mu(G, k) \ge \mu(G,k) \ge \hat\mu(G,k)\]
-因此对于同一个图，上述三者里VCAL-P问题的固定参数算法其参数是最小的，即其参数是更加紧致（stricter）的。
-另外据我们所知，VCAL-P是所有参数化顶点覆盖问题里，参数最紧致的。
-
-
-在文献\cite{garg2015raising}中，作者最早定义了VCAL-P问题，证明了其是固定参数可解并给出了一个$\mathcal{O}^*(3^{\hat\mu})$的FPT算法。
-我们将在前人的研究基础上继续优化该问题，并成功获得时间复杂度为\textcolor[rgb]{1.00,0.00,0.00}{补充}的固定参数算法，较之前的最好结果有了较大的改进。
-
-\subsection{有关图匹配的一些术语及性质}
-在本章之中，我们将继续使用上一章定义的关于图的术语，同时本节将再给出一些新的术语和一些已经被前人证明的性质。
-
-\begin{definition}[匹配集]
-对于图$G(V, E)$，如果其一个边集$E' \subseteq E$满足对其中任意两条边$e_1, e_2 \in E'$有$e_1 \cap e_2 = \emptyset$，
-则我们将边集$E'$定义为图$G$的一个匹配。如果$E'$是所有匹配中最大的那个，则称为图G的最大匹配。
-所有的顶点都在$E'$中，则称该匹配为图G的完美匹配。
-\end{definition}
-
-\begin{definition}[因子临界图（factor-critical graph）]
-对于图$G(V, E)$，如果对于任意一个顶点$v \in V$，其导出子图$G \setminus \{v\}$都有完美匹配，则图G是因子临界图。
-\end{definition}
-
-求解一般图的最大匹配是图论中非常经典的问题，早在1980年Micali等已经给出了一个多项式算法\upcite{micali1980v}。 
-同时，除了图的最大匹配，我们算法中还会使用到一个一般图匹配问题上的经典分解，如下：
-
-\begin{definition}[Gallai-Edmonds分解]
-对于图$G(V, E)$，其Gallai-Edmonds分解是它顶点集合的一个划分，$V = O \uplus I \uplus P$，其中3个子集分别定义如下：
-\begin{itemize}
-  \item $O = \{v \in V\;|\;\text{存在图Ｇ的最大匹配不包含顶点$v$} \}$
-  \item $I = N(O)$
-  \item $P = V \setminus (O \cup I)$
-\end{itemize}
-\end{definition}
-
-接下来，罗列出我们算法中会使用到的关于Gallai-Edmonds分解的性质\upcite{lovasz2009matching,edmonds1965paths,gallai1963kritische,gallai1964maximale}。
-
-\begin{lemma}
-对于图$G(V, E)$，其Gallai-Edmonds分解是唯一的，并且能在多项式时间内获得。
-\end{lemma}
-
-\begin{lemma}
-假设$V = O \uplus I \uplus P$是图$G(V, E)$的Gallai-Edmonds分解，则下列性质均成立
-\begin{itemize}
-  \item 图G的导出子图$G[O]$中，每一个连通块都是因子临界图；
-  \item 图G的一个匹配M是其最大匹配当且仅当
-        \begin{itemize}
-          \item[a.]对于图$G$的导出子图$G[O]$中每个连通块$H$，边集$M \cap E(H)$构成H的一个近似完美匹配；
-          \item[b.]对于每个顶点$i \in I$，存在另外一个顶点$o \in O$使得$\{i, o\} \in M$;
-          \item[c.]对于图$G$的导出子图$G[P]$，边集$M \cap E(G[P])$构成其完美匹配。
-        \end{itemize}
-\end{itemize}
-\end{lemma}
-
-\begin{lemma}[Gallai-Edmonds分解的稳定性] \label{stability lemma}
-用$O(H), I(H), P(H)$ 表示图H的Gallai-Edmonds分解的三个子集。则对于任意一个顶点$v \in V(G)$，有
-\begin{itemize}
-\item 如果$v \in O(G)$, 那么\[O(G - v) \subseteq (O(G) \setminus \{ v \}), I(G - v) \subseteq I(G),P(G - v) \supseteq P(G)\]
-\item 如果$v \in I(G)$, 那么\[O(G - v) = O(G), I(G - v) = (I(G) \setminus \{ v \}),P(G - v) = P(G).\]
-\item 如果$v \in P(G)$, 那么\[O(G - v) \supseteq O(G), I(G - v) \supseteq I(G),P(G - v) \subseteq (P(G) \setminus \{ v \}).\]
-\end{itemize}
-\end{lemma}
-
-\subsection{有关可满足性问题（SAT）的一些术语的定义}
-可满足性问题（SAT问题）是指给定一个布尔表达式，问是否存在一组变量的赋值使得表达式是可以满足的。
-本文中讨论的SAT问题，均是其中比较特殊的，如果没有
+在文献\cite{cygan2011solving}中作者Cygan等利用其发明的Cut\&Count技术，设计了时间复杂度为$\mathcal{O}(3^k)$的固定参数算法来求解FVC问题。
+该算法是一个蒙地卡罗算法（Monte Carlo algorithm），如果不存在大小不超过k的FVS集合，那么算法一定会返回“NO”，否则有1/2概率返回“YES”。
+据我们所知，该算法是迄今为止FVS问题上复杂度最低的固定参数算法。
+而如果不希望使用随机性算法的话，迄今最快的算法是Kociumaka等\upcite{kociumaka2014faster}在2014年提出的基于迭代压缩技术的算法，
+他们可以在$\mathcal{O}(3.619^k)$的时间复杂度内确切的给出问题的答案。
 
