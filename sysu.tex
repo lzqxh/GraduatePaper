@@ -14,18 +14,13 @@
 
 \documentclass[12pt,openany,a4paper,twoside]{book}
 %algorithm和algorithmic这两个宏包用于画伪代码
-%\usepackage{algorithm}
-%\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 %使用booktab宏包定义三条划线命令：\toprule、\midrule 和 \bottomrule
 %用于画三线表
 \usepackage{booktabs}
 \usepackage{amsmath,amssymb}
 
-
-\usepackage{algorithm}
-%\usepackage{algorithmic}
-\usepackage{algpseudocode}
-%\usepackage[noend]{algpseudocode}
 
 
 \renewcommand{\algorithmicrequire}{ \textbf{Input:}} %Use Input in the format of Algorithm
@@ -40,33 +35,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%设置区%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %此处填入中文论文题目
-\newcommand{\ctitle}{顶点覆盖问题的固定参数算法研究}
+\newcommand{\ctitle}{顶点覆盖及反馈顶点集问题参数算法研究}
 %此处填入英文论文题目
-\newcommand{\etitle}{Network Traffic Classification Based on Machine Learning}
+\newcommand{\etitle}{Research On Parameterized Algorithms For Vertex Cover and Feedback Vertex Set Problems}
 %此处填入作者中文名
-\newcommand{\cauthor}{车春回}
+\newcommand{\cauthor}{林泽群}
 %此处填入作者英文名
-\newcommand{\eauthor}{Chunhui CHE}
+\newcommand{\eauthor}{Zequn Lin}
 %此处填入导师姓名
-\newcommand{\supervisor}{王建民\ 副教授}
+\newcommand{\supervisor}{刘咏梅教授 \ 林瀚讲师}
 %此处填入专业名称
-\newcommand{\esupervisor}{Associate Professor Jianmin WANG}
+\newcommand{\esupervisor}{Prof. Yongmei Liu, Lecturer Han Lin}
 %此处填入专业名称
-\newcommand{\major}{计算机应用技术}
+\newcommand{\major}{计算机科学与技术}
 %此处填入专业名称
-\newcommand{\emajor}{Computer Application and Technology}
+\newcommand{\emajor}{Computer Science and Technology}
 %此处填入论文完成时间
-\newcommand{\finishdate}{2009~年~5~月}
+\newcommand{\finishdate}{2016~年~3~月}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%\include{setup/cover}      %**********封面
+\include{setup/cover}      %**********封面
 %\include{setup/account}    %**********原创性声明
 %
 \renewcommand{\baselinestretch}{1.5}\normalsize      % 定义行距
 %
-%\include{abstract/abstract_cn}    %**********中文摘要
-%\include{abstract/abstract_en}    %**********英文摘要
+\include{abstract/abstract_cn}    %**********中文摘要
+\include{abstract/abstract_en}    %**********英文摘要
 %
 \include{setup/content}    %***********生成目录
 %
@@ -74,23 +69,24 @@
 %
 
 
-%\include{content/Chapter-introduction}       %*********前言
+\include{content/Chapter-introduction}       %*********前言
 %
-%\include{content/Chapter-classficationArchitecture}     %*********因特网流量分类过程
+\include{content/Chapter-RelatedResearchOnFPT}     %*********FPT算法的研究现状
 %
-%\include{content/Chapter-machineLearning}      %*********基于机器学习的因特网流量分类
-%
-%\include{content/Chapter-experiment}        %*********实验分析与结论
-%
-%\include{content/Chapter-summary}        %*********总结与展望
+
 
 \include{content/algorithm/Chapter-problemDescribeAndSymbol}
 \include{content/algorithm/Chapter-problemToNetwork}
 \include{content/algorithm/Chapter-kernelisedAlgorithm}
 \include{content/algorithm/Chapter-branchAlgorithm}
+\include{content/algorithm/Chapter-conclusion}
 
 \include{content/algorithm-2/Chapter-problemDescribeAndSymbol}
+\include{content/algorithm-2/Chapter-IterativeCompression}
+\include{content/algorithm-2/Chapter-DisjointFVS}
+\include{content/algorithm-2/Chapter-conclusion}
 
+\include{content/Chapter-summary}        %*********总结与展望
 %
 \input{setup/setothers}       %*********设置其它部分章标题格式
 %

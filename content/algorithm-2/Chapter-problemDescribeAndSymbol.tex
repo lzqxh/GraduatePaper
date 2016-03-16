@@ -21,9 +21,11 @@
 \end{definition}
 
 \begin{definition}[反馈顶点集]
-对于图$G(V, E)$, 若集合$V' \subseteq V$使得$G \setminus V'$中不存在任何环（即，图$G \setminus V'$是森林）, 
+对于图$G(V, E)$, 若集合$V' \subseteq V$使得$G \setminus V'$中不存在任何环（即，图$G \setminus V'$是森林）,
 则称$V'$是图G的一个\textbf{反馈顶点集}（Feedback Vertex Set, 简称$FVS$）。
 \end{definition}
+
+为了方面对于算法的描述，我们继续引进一些图的术语。对于图G，$cc(G)$表示图G上连通块的个数。
 
 \subsection{参数化反馈顶点集问题}
 对于一般图来说，回答是否存在大小不超过k的反馈顶点集，是非常经典组合优化问题。
@@ -47,4 +49,6 @@
 据我们所知，该算法是迄今为止FVS问题上复杂度最低的固定参数算法。
 而如果不希望使用随机性算法的话，迄今最快的算法是Kociumaka等\upcite{kociumaka2014faster}在2014年提出的基于迭代压缩技术的算法，
 他们可以在$\mathcal{O}(3.619^k)$的时间复杂度内确切的给出问题的答案。
+
+本章中，我们同样使用迭代压缩技术，最后获得一个\textcolor[rgb]{1.00,0.00,0.00}{$\mathcal{O}(2.554^k)$}时间复杂度的固定参数算法。
 

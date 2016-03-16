@@ -271,6 +271,8 @@
 \newtheorem{corollary}{\hspace{2em}推论}[chapter]
 \newtheorem{claim}{\hspace{2em}断言}[chapter]
 \newtheorem{exercise}{\hspace{2em}习题}[chapter]
+
+\newtheorem{reducerule}{\hspace{2em}收缩规则}
 \theoremsymbol{$\blacksquare$}
 \newtheorem{example}{\hspace{2em}例}[chapter]
 
@@ -436,6 +438,12 @@
 
 
 \newcommand{\abs}[1]{\left\vert #1 \right\vert}
+
+%% 罗马数字
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
 
 
 
