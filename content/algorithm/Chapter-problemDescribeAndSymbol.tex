@@ -1,5 +1,5 @@
-\chapter{基于线性松弛下界的线性固定参数算法}
-顶点覆盖问题(Vertex Cover, 缩写为VC),即对于参数k，询问给定图中是否存在大小满足k的顶点集合满足：对于图中任意一条边的两个端点至少有一个在该集合中。
+\chapter{基于线性松弛下界的参数化顶点覆盖问题}
+顶点覆盖问题(Vertex Cover, 缩写为VC),即对于参数k，询问给定图中是否存在大小不超过k的顶点集合满足：对于图中任意一条边的两个端点至少有一个在该集合中。
 该问题是最早被提出来的21个NP-complete问题之一\cite{karp1972reducibility}，也是最早证明是固定参数可解(Fixed parameter tractable)的问题\cite{downey2012parameterized}。
 
 本章提出了一个时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$的线性固定参数算法。

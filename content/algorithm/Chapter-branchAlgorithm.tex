@@ -7,7 +7,7 @@
 最后证明在这些分支规则的共同作用下整棵搜索树的节点数量不超过$2.618^\mu$。
 
 \vspace{0.5cm}
-为了更好的分析分支算法的时间负责度，首先给出以下引理：
+为了更好的分析分支算法的时间复杂度，首先给出以下引理：
 \begin{lemma} \label{LemmaUpdateMaxflow}
 假设图G满足$surplus(G) \ge 1$，且对于求解Dual-$LPVC(G)$模型的网络W已经求得其最大流$f$。
 令$G' = G \setminus S$，则可以在$O(\abs{S}(\abs{V} + \abs{E}))$的时间复杂度内
@@ -145,7 +145,7 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 
 接下来分析分支规则二的时间复杂度。
 显然应用核心化算法在图$G \setminus \{u_1, u_2\}$上，
-和判断顶点集合$V_1 \cup \{u_1, u_2\}$是否图G中的独立集均可以在$O(\abs{V} + \abs{E})$时间负责度内完成。
+和判断顶点集合$V_1 \cup \{u_1, u_2\}$是否图G中的独立集均可以在$O(\abs{V} + \abs{E})$时间复杂度内完成。
 对于分支规则二产生的图$G_1$，其等价于前文中我们对图$G \setminus \{u_1, u_2\}$应用核心化算法收缩出来的新图$G'$，
 在核心化算法中，已经获得了其对应的求解Dual-$LPVC(G')$模型的网络的最大流。所以不需要额外时间复杂度去求解该网络的最大流，
 故分支规则二，也可以在线性时间内应用。
@@ -202,7 +202,7 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 注意在利用核心化算法构造$G'$的时候，已经求得其Dual-$LPVC(G')$模型的最优解。
 同时分支一的图$G_1$是从图G中移除一个顶点$v'$获得的，分支二的图$G_2$是从图$G'$中移除顶点$u_2'$获得的，
 所以依据引理\ref{LemmaUpdateMaxflow}，我们分别可以在求解Dual-$LPVC(G)$，Dual-$LPVC(G')$模型的网络的最大可行流的基础上，
-在$O(\abs{V} + \abs{E})$的时间负责度内构造两个分支的对应的最大可行流。
+在$O(\abs{V} + \abs{E})$的时间复杂度内构造两个分支的对应的最大可行流。
 故，分支规则三也能在线性时间复杂度内被执行。
 
 \subsection{算法时间复杂度分析}
@@ -340,28 +340,28 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
     \If {$\mu < 0$} \Return False \Comment 搜索的终止条件
     \ElsIf {图G中已经没有顶点} \Return True
     \EndIf
-    
+
     \State 从图$G$中任意取一个顶点$v \in V(G)$ \Comment 分支规则一
     \State 从v的邻居$N(v)$中任意取两个顶点$u_1, u_2 \in N(v)$
     \State $W', f' \gets MaintainMF(W, f, \{u_1, u_2\})$
-    \If {$F(f') = \abs{V} - 2$} 
+    \If {$F(f') = \abs{V} - 2$}
         \State $branchA \gets \text{VCAL-All}(G\setminus\{v\}, k - 1, MaintainMF(W, f, \{v\}))$
         \State $branchB \gets \text{VCAL-All}(G\setminus\{u_1, u_2\}, k - 2, W', f'))$
         \State \Return $branchA \vee branchB$
     \EndIf
-    
-    \State $(G', k', W', f', V_1, V_0) \gets Kernelise(G\setminus\{u_1, u_2\}, k - 2, W', f')$ 
+
+    \State $(G', k', W', f', V_1, V_0) \gets Kernelise(G\setminus\{u_1, u_2\}, k - 2, W', f')$
     \State $V_1 \gets V_1 \cup \{u_1, u_2\}$
     \If {$V_1$不是图G中的独立集} \Comment 分支规则二
         \State \Return $\text{VCAL-All}(G', k', W', f')$
     \EndIf
-    
+
     \State 从图$G'$中任意取一个顶点$v' \in N_G(V_1)$ \Comment 分支规则三
     \State 从图$G'$中任意取一个顶点$u_2' \in N_{G'}(v')$
     \State $branchA \gets \text{VCAL-All}(G\setminus\{v'\}, k - 1, MaintainMF(W, f, \{v'\}))$
     \State $branchB \gets \text{VCAL-All}(G'\setminus\{u_2'\}, k' - 1, MaintainMF(W', f', \{u_2'\}))$
     \State \Return $branchA \vee branchB$
-    
+
 \EndFunction
 \end{algorithmic}
 \end{algorithm} 
