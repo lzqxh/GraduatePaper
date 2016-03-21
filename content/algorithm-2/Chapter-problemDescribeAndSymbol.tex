@@ -3,7 +3,7 @@
 对于图中任意一条环都与这个顶点集有交集。
 与顶点覆盖问题类似，该问题也是最早被提出来的21个NP-complete问题之一\cite{karp1972reducibility}。
 
-本章提出了一个时间复杂度为$\mathcal{O}(2.554^k)$的固定参数算法。
+本章提出了一个时间复杂度为$\mathcal{O}^*(2.554^k)$的固定参数算法。
 \section{相关术语及问题的定义}
 
 本章里我们会继续沿用上一大章中关于图的符号和术语。同时，在本节中我们会继续扩充一些会使用到的术语，
@@ -44,11 +44,11 @@
 在参数计算领域，参数化FVS也是其中一个非常重要的问题，
 一系列的研究一直在不停的改进其下限，如文献\cite{bodlaender1994disjoint,downey1992fixed,downey2012parameterized,raman2006faster,kanj2004parameterized,dehne20072o,guo2006compression,chen2008improved,cao2010feedback,cygan2011solving,kociumaka2014faster} 等。
 
-在文献\cite{cygan2011solving}中作者Cygan等利用其发明的Cut\&Count技术，设计了时间复杂度为$\mathcal{O}(3^k)$的固定参数算法来求解FVC问题。
+在文献\cite{cygan2011solving}中作者Cygan等利用其发明的Cut\&Count技术，设计了时间复杂度为$\mathcal{O}^*(3^k)$的固定参数算法来求解FVC问题。
 该算法是一个蒙地卡罗算法（Monte Carlo algorithm），如果不存在大小不超过k的FVS集合，那么算法一定会返回“NO”，否则有1/2概率返回“YES”。
 据我们所知，该算法是迄今为止FVS问题上复杂度最低的固定参数算法。
 而如果不希望使用随机性算法的话，迄今最快的算法是Kociumaka等\upcite{kociumaka2014faster}在2014年提出的基于迭代压缩技术的算法，
-他们可以在$\mathcal{O}(3.619^k)$的时间复杂度内确切的给出问题的答案。
+他们可以在$\mathcal{O}^*(3.619^k)$的时间复杂度内确切的给出问题的答案。
 
-本章中，我们同样使用迭代压缩技术，最后获得一个\textcolor[rgb]{1.00,0.00,0.00}{$\mathcal{O}(2.554^k)$}时间复杂度的固定参数算法。
+本章中，我们同样使用迭代压缩技术，最后获得一个\textcolor[rgb]{1.00,0.00,0.00}{$\mathcal{O}^*(2.554^k)$}时间复杂度的固定参数算法。
 

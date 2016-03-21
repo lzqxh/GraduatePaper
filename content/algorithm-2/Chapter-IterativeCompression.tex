@@ -14,7 +14,7 @@ Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-F
 首先，我们直接给出关于Disjoint-FVS问题的时间复杂度，并基于该结论和迭代压缩技术，给出FVS问题的时间复杂度。
 之后，本章的剩余部分将注意力集中在Disjoint-FVS问题上，证明下述结论的正确性。
 \begin{theorem} \label{Disjoint-FVSTime}
-  对于一个Disjoint-FVS问题实例$I = (G, U, D, k)$，可以在$\mathcal{O}(C^k_{k + cc(G[U])/2})$时间复杂度内构成出符合条件的反馈顶点集合或者回答不存在这样的反馈顶定集合。
+  对于一个Disjoint-FVS问题实例$I = (G, U, D, k)$，可以在$\mathcal{O}^*(C^k_{k + cc(G[U])/2})$时间复杂度内构成出符合条件的反馈顶点集合或者回答不存在这样的反馈顶定集合。
 \end{theorem}
 
 在定理\ref{Disjoint-FVSTime}中,我们使用了组合计数的方式来表达其复杂度，不过这并不是最终结果。
@@ -22,7 +22,7 @@ Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-F
 
 在定理\ref{Disjoint-FVSTime}的基础上，我们应用迭代压缩技术构造出下面求解FVS问题的算法。
 \begin{theorem}
-对于一个FVS问题实例$I = (G, k)$, 可以在可以在$\mathcal{O}(3.598^k)$时间复杂度内构成出大小小于k的反馈顶点集合或者回答不存在这样的反馈顶定集合。
+对于一个FVS问题实例$I = (G, k)$, 可以在可以在$\mathcal{O}^*(3.598^k)$时间复杂度内构成出大小小于k的反馈顶点集合或者回答不存在这样的反馈顶定集合。
 \end{theorem}
 \begin{proof}
 令$v_1, v_2, ..., v_n$是图G顶点集合V的任意排列，对于$1 \le i \le n$定义顶点集合$V_i = \{v_1, v_2, ..., v_i\}$和图$G_i = G[V_i]$。
@@ -36,19 +36,19 @@ Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-F
 接下来，我们枚举集合$Z$的所有子集$Y$，尝试回答当图$G_{i+1}$的顶点覆盖集一定包含所有Y中顶点，并且一定不包含$Z \setminus Y$中顶点时，
 其大小是否能够不超过k。令$U = Z \setminus Y$，显然$G[U]$也是一个森林。
 此时根据上述约束，我们可以把当前的问题转换成Disjoint-FVS问题实例$I_Y = (G_{i+1} \setminus Y, U, D, k-\abs{Y})$。
-由定理\ref{Disjoint-FVSTime}，可以得知求解问题实例$I_Y$的时间复杂度为$\mathcal{O}(C^k_{k + cc(G[U])/2})$，其中$cc(G[U]) \le \abs{U} = k - \abs{Y}$，
-故时间复杂度可以化简成，$\mathcal{O}(C^{k - \abs{Y}}_{3(k - \abs{Y})})$。
-应用Stirling公式，可以得到，$\mathcal{O}(C^{k - \abs{Y}}_{3(k - \abs{Y})}) = \mathcal{O}(1.61185^{k - \abs{Y}})$。
+由定理\ref{Disjoint-FVSTime}，可以得知求解问题实例$I_Y$的时间复杂度为$\mathcal{O}^*(C^k_{k + cc(G[U])/2})$，其中$cc(G[U]) \le \abs{U} = k - \abs{Y}$，
+故时间复杂度可以化简成，$\mathcal{O}^*(C^{k - \abs{Y}}_{3(k - \abs{Y})})$。
+应用Stirling公式，可以得到，$\mathcal{O}^*(C^{k - \abs{Y}}_{3(k - \abs{Y})}) = \mathcal{O}^*(1.61185^{k - \abs{Y}})$。
 最后，如果对于某个子集$Y \subseteq Z$，我们求解出Disjoint-FVS问题实例$I_Y$的反馈顶点集$X$，则$X \cup Y$是问题实例$(G_{i+1}, k)$的解。
 反之，如果不存在这样的子集，那么问题实例$(G_{i+1}, k)$不存在解。
 
 考虑整个过程的运行时间，求解问题实例$(G_{i+1}, k)$时间复杂度，如下：
 \begin{equation*}
-  \mathcal{O}(\sum_{Y \subseteq Z}C^{k - \abs{Y}}_{3(k - \abs{Y})}) \\
-   = \mathcal{O}(\sum_{Y \subseteq Z}1.61185^{k - \abs{Y}})
-   = \mathcal{O}((1 + 1.61185^2)^k) = \mathcal{O}(3.598^k)
+  \mathcal{O}^*(\sum_{Y \subseteq Z}C^{k - \abs{Y}}_{3(k - \abs{Y})}) \\
+   = \mathcal{O}^*(\sum_{Y \subseteq Z}1.61185^{k - \abs{Y}})
+   = \mathcal{O}^*((1 + 1.61185^2)^k) = \mathcal{O}^*(3.598^k)
 \end{equation*}
-从$G_{k+1}$到$G_n$，我们重复上述过程n - k次便可以求解原FVS问题实例$(G, k)$，整个过程时间复杂度也可以表示成$\mathcal{O}(3.598^k)$。
+从$G_{k+1}$到$G_n$，我们重复上述过程n - k次便可以求解原FVS问题实例$(G, k)$，整个过程时间复杂度也可以表示成$\mathcal{O}^*(3.598^k)$。
 
 证毕。
 \end{proof}

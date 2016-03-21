@@ -1,1 +1,194 @@
 \chapter{相关问题研究现状}
+本章中我们会介绍参数计算领域的研究现状，其中重点介绍本文研究的两个NP-hard问题在该领域的研究成果。
+\section{参数计算基本概念}
+%参数化问题 ， 固定参数可解，核心，规约
+\begin{definition} [参数化问题]
+参数化问题是一个判定型问题，其问题实例形式如下$I(Q, k)$，其中Q是我们需要解答的问题，k是一个非负整数称之为问题实例I的参数。
+如果问题Q存在满足参数k约束的解，则问题实例有解，否则问题实例无解。
+\end{definition}
+
+很多NP-hard问题的标准参数化版本是用参数k约束目标解的规模，即询问问题Q是否存在一个大小小于k的解。
+当然，这并不是必须的，同一个NP-hard问题如果对于参数的定义不一样，可能会有多个参数化版本。
+在本章介绍参数化顶点覆盖问题的研究中，我们就会看到不同的参数化顶点覆盖问题。
+
+\begin{definition} [固定参数可解(Fixed-Parameter Tractable, 简称FPT)] \label{def_fpt}
+如果对于一个参数化问题的任何实例$I(Q, k)$，存在一个算法A都能在$O(f(k)n^c)$的时间负责度内判定其是否有解，
+其中$f(k)$是一个可计算函数，$n$是问题Q的规模，$c$是一个与$n$和$k$无关的常数，
+则称该参数化问题是固定参数可解( FPT) 的。
+算法A称之为该问题的一个固定参数算法（FPT算法）。
+\end{definition}
+
+观察上述定义，我们看到一个固定参数算法的时间复杂度是由两部分组成的。对于NP-hard问题，$f(k)$函数的级别肯定是高于多项式的，而剩余部分$n^c$是关于问题规模的多项式函数。
+在很多情况下，因为多项式函数的增长远低于$f$函数，我们会忽略复杂度中多项式部分，而将一个固定参数算法的时间负责度直接记为$\mathcal{O}^*(f(k))$。
+
+\begin{definition} [\text{W[1]-hard}] \label{def_whard}
+如果对于一个参数化问题，不存在任何固定参数算法，则称该问题是W[1]-hard的。
+\end{definition}
+
+定义\ref{def_fpt}和定义\ref{def_whard}组成了参数计算中对于问题复杂度的定义。
+
+\begin{definition}[核(kernel)]
+如果对于一个参数化问题的任何实例$I(Q, k)$，存在一个算法A和关于k的函数$g(k)$,
+其中算法A能在多项式时间内将其转化成另外一个问题实例$I'(Q',k')$，
+使得$k' \le k$, 新问题实例中$Q'$的规模$n' \le g(k)$，并且问题实例I有解当且仅当新问题实例$I'$有解。
+则我们将$I'$称之为$I$的核，算法A称之为该参数化问题的一个核心化算法。
+\end{definition}
+
+\begin{definition}[参数化规约(简称fpt-规约)]
+对于一个参数化问题P，如果存在一个算法A可以在多项式时间内将其每个实例$I(Q, k)$转化成另外一个转化成另外一个参数化问题$P'$中对应的实例$I'(Q', k')$，
+并且$k' = g(k)$。则我们称问题P可以参数化规约到另外一个参数化问题$P'$。
+\end{definition}
+
+注意上述两个定义中，核心化是在同个参数化问题里的实例之间的转化，而规约化则是问题之间的转化。
+\section{参数算法设计研究现状}
+
+\section{参数化顶点覆盖问题研究现状}
+经典的参数化顶点覆盖问题是以目标顶点覆盖集大小作为问题的参数，如下 \\
+
+\begin{tabular}{| p{0.9\headwidth} |}
+  \hline
+  参数化顶点覆盖问题(Vertex Cover) \\
+  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{参数：} $k$\\
+  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \hline
+\end{tabular} \vspace{0.5cm} \\
+
+该问题的第一个FPT算法是由Buss和Goldsmith设计的，时间复杂度为$O(2^kk^{2k+2} + kn)$\upcite{buss1993nondeterminism}。
+之后的20多年了，有一系列研究在不断地改进其FPT算法的时间复杂度\upcite{balasubramanian1998improved,chen2001vertex,stege1999improved,niedermeier2003efficient,niedermeier1999upper,chen2000improvement}。
+当前最快的算法是由Chen和Kanj在2010提出的\upcite{chen2010improved}，他们成功将该问题的下界改进到$\mathcal{O}^*(1.2738^k)$。
+这其中大部分算法的设计是基于分支搜身技术，他们罗列出各种情形下适用的分支规则，并考虑最坏情况下的搜索树规模跟参数$k$之间的关系。
+
+在设计FPT算法的同时也有一些研究人员对于参数化顶点覆盖问题的核感兴趣\upcite{chlebik2008crown,chen2001vertex,lampis2011kernel,soleimanfallah2011kernel}。
+已经证明了不可能存在核心化算法使得该问题的任意实例都能产生小于$O(ck)$的核，其中c是小于2的常数\upcite{chen2001vertex}。
+目前最好的研究成果是文献\cite{lampis2011kernel}，在其中Lampis设计了一个算法对于任意常数c都能在多项式时间内生成一个$O(2k - c \log k)$级别的问题实例的核。
+
+在经典的参数化顶点覆盖问题中，到当$k$小于某些最小顶点覆盖集的下界时，讨论时间复杂度是没有意义的，此时问题是平凡的。
+于是在最几年该问题的研究中，研究人员开始聚焦于基于某些下界的参数化版本。
+如用$mm(G)$表示图G的最大匹配数，显然对于任意图最小顶点覆盖数总是大于等于其最大匹配数。
+在文献\cite{razgon2009almost}，作者Razgon and O'Sullivan定义了该问题的一个新参数$\mu_1 = k - mm(G)$，并且设计了一个时间复杂度为$\mathcal{O}^*(15^{\mu_1})$的FPT算法。
+这里给出该版本的参数化顶点覆盖问题的定义，如下\\
+
+\begin{tabular}{| p{0.9\headwidth} |}
+  \hline
+  基于保证值的参数化顶点覆盖问题 \\ \ \ (Above-Guarantee Vertex Cover, 简称AGVC) \\
+  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{参数：} $\mu_1 = k - mm(G)$\\
+  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \hline
+\end{tabular} \vspace{0.5cm} \\
+假设$vc^*(G)$表示图G的最小顶点覆盖线性松弛下界。在文献\cite{narayanaswamy2012lp, garg2015raising}中，又分别定义了参数$\mu_2 = k - vc^*(G)$和$\mu_3 = k - 2vc^*(G) + mm(G)$，
+并且分别证明基于这两个参数定义的问题版本也是固定参数可解的。下面将这两个新问题的定义给出，如下： \\
+
+\begin{tabular}{| p{0.9\headwidth} |}
+  \hline
+  基于线性松弛下界的参数化顶点覆盖问题 \\ \ \ (Vertex Cover Above LP, 简称VCAL) \\
+  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{参数：} $\mu_2 = k - vc^*(G)$\\
+  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \hline
+\end{tabular} \vspace{0.5cm} \\
+
+\begin{tabular}{| p{0.9\headwidth} |}
+  \hline
+  基于Lov\'asz-Plummer下界的参数化顶点覆盖问题 \\ \ \ (Vertex Cover Above Lov\'asz-Plummer, 简称VCAL-P) \\
+  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{参数：} $\mu_3 = k - 2vc^*(G) + mm(G)$\\
+  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \hline
+\end{tabular} \vspace{0.5cm} \\
+
+在这个4个不同的参数化顶点覆盖版本，可以证明其中4个参数大小关系有$k \le \mu_1 \le \mu_2 \le \mu_3$。在表\ref{tab:vcfpt}中，我们列举了近几年中对于这几个参数化顶点覆盖问题的研究成果。
+\begin {table}[H]
+\caption {参数化顶点覆盖问题FPT算法} \label{tab:vcfpt}
+\begin{center}
+\begin{tabular}
+{l|l|l|l}
+%{ |>{\centering\arraybackslash}m{.75in}|>{\centering\arraybackslash}m{1.55in}|>{\centering\arraybackslash}m{1.25in}|>{\centering\arraybackslash}m{.95in}|}
+\toprule[1.5pt]
+\bf 参数问题 & \bf 作者(文献) & \bf 时间复杂度 & \bf 发表会议（期刊）\/ 时间 \\
+\midrule
+VC        &  Chen和Kanj\upcite{chen2010improved}          & $\mathcal{O}^*(1.2738^k)$      & TCS 2008      \\
+AGVC      &  Razgon等\upcite{razgon2009almost}  & $\mathcal{O}^*(15^{\mu_1})$    & ICALP 2008     \\
+AGVC      &  Raman等\upcite{raman2011paths}                 & $\mathcal{O}^*(9^{\mu_1})$     & ESA 2011      \\
+AGVC      &  Cygan等\upcite{cygan2011multiway}              & $\mathcal{O}^*(4^{\mu_1})$     & IPEC 2011, TOCT 2013    \\
+VCAL      &  Narayanaswamy等\upcite{narayanaswamy2012lp}    & $\mathcal{O}^*(2.618^{\mu_2})$ & STACS 2012     \\
+VCAL      &  Lokshtanov等\upcite{lokshtanov2014faster}      & $\mathcal{O}^*(2.3146^{\mu_2})$& TALG 2014      \\
+VCAL      &  Iwata等\upcite{iwata2014linear}      & $O(4^{\mu_2}(\abs{V} + \abs{E}))$& SODA 2014      \\
+VCAL-P    &  Garg等\upcite{garg2015raising}                 & $\mathcal{O}^*(3^{\mu_3})$     & SODA 2015      \\
+\bottomrule[1.25pt]
+\end {tabular}
+\end{center}
+\end {table}
+
+\section{参数化反馈顶点集问题研究}
+反馈顶点集问题也是最早被证明是NP难的21个问题之一\upcite{karp1972reducibility}，
+同样也有很多研究人员研究参数计算领域的该问题。这里我们首先给出参数化反馈顶点问题的完整定义，如下:\\
+
+\begin{tabular}{| p{0.9\headwidth} |}
+  \hline
+  参数化反馈顶点集问题(Feedback Vertex Set，简称FVS) \\
+  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{参数：} $k$\\
+  \textbf{问题：} 图G中是否存在一个反馈顶点集合，其大小不超过k\\
+  \hline
+\end{tabular} \vspace{0.5cm} \\
+
+对于参数化反馈顶点集问题，早在1992年就由Downey 和Fellows证明了是固定参数可解，他们给出了一个$\mathcal{O}^*((2k+1)^k)$级别的固定参数算法。
+然而，这样的复杂度显然是没有实际应用价值的，当k=10时$\mathcal{O}^*((2k+1)^k) \approx \mathcal{O}^*(10^{12})$，几乎不存在计算的可能性。
+在之后的20多年里，经过持续不断的改进，当前该问题上最快的固定参数算法已经到达了$\mathcal{O}^*(3.592^k)$级别。
+下面表\label{tab:fvsfpt}中，我们列出了对于该问题的所有改进。
+
+\begin {table}[H]
+\caption {参数化反馈顶点集问题FPT算法} \label{tab:fvsfpt}
+\begin{center}
+\begin{tabular}
+{l l l}
+\toprule[1.5pt]
+\bf 作者(文献) & \bf 时间复杂度 & \bf 时间 \\
+\midrule
+Downey和Fellows\upcite{downey1992fixed}          & $\mathcal{O}^*((2k+1)^k)$     & 1992     \\
+Bodlaender\upcite{bodlaender1994disjoint}  & $\mathcal{O}^*(17(k^4)!)$    & 1994     \\
+Raman等\upcite{raman2002faster}                 & $\mathcal{O}^*(max(12^k, (4 \log k)^k)))$     & 2002      \\
+Kanj和Pelsmajer等\upcite{kanj2004parameterized}              & $\mathcal{O}^*(((2 \log k + 2 \log\log k + 18)^k)$     & 2004    \\
+Raman等\upcite{raman2006faster}    & $\mathcal{O}^*(((12 \log k/ \log \log k + 6)^k)$ & 2006     \\
+Guo和Gramm\upcite{guo2006compression}      & $O(4^{\mu_2}(37.7^k))$& 2006      \\
+Dehne和Fellows等\upcite{dehne20072o}                 & $\mathcal{O}^*(10.6^k)$     & 2007      \\
+Chen和Fomin等\upcite{chen2008improved}                 & $\mathcal{O}^*(5^k)$     & 2008      \\
+Cao和Chen等\upcite{cao2010feedback}                 & $\mathcal{O}^*(3.83^k)$     & 2008      \\
+Kociumaka和Pilipczuk等\upcite{2013arXiv1306.3566K}                 & $\mathcal{O}^*(3.592^k)$     & 2008      \\
+\bottomrule[1.25pt]
+\end {tabular}
+\end{center}
+\end {table}
+
+在上述表\ref{tab:fvsfpt}，我们列举的所有算法都是确定性的固定参数算法。
+还有另外一些研究人员尝试使用随机性的固定参数算法来求解FVS问题。
+这里的随机性算法在问题实例存在合法解的时候，会有一定概率返回“YES”，其他时候均返回“NO”。
+显然这里多次运行算法后，得出的结论基本上是可信的。
+早在2000年时，Bar-Yehuda等就设计出时间负责度为$\mathcal{O}^*(4^k)$的随机固定参数算法\upcite{bar2000randomized}。
+而最近，Cygan等设计了一种基于树宽求解连通性问题的新技术---Cut\&Count，在此基础上他们将该技术与迭代压缩技术结合设计了一个时间负责度为$\mathcal{O}^*(3^k)$的随机固定参数算法
+\upcite{cygan2011solving}。
+然而比较可惜的是这两个算法都很难被改造成确定性算法。
+
+另外，FVS问题的核心化技术也是我们设计该问题的固定参数算法的重要组成部分。
+如果在求解之前我们先计算出问题实例的核，之后在核上进行求解也能大大地降低问题实例的求解难度。
+对于这个方向的研究，最早由Burrage和Estivill-Castro等\upcite{burrage2006undirected} 证明参数化反馈顶点集问题存在关于k的多项式规模的核。
+同样经过很多人的改进，现在已经有核心化算法可以获得平方级别的核，Thomass{\'e}等通过一些系列的规约规则使得最终问题实例的规模不大于$4k^2$\upcite{thomasse2009quadratic}。
+下面表\ref{tab:fvskernel}中，我们列举出关于FVS问题的核的研究轨迹。
+
+\begin {table}[H]
+\caption {参数化反馈顶点集问题的核} \label{tab:fvskernel}
+\begin{center}
+\begin{tabular}
+{l l l}
+\toprule[1.5pt]
+\bf 作者(文献) & \bf 核的问题规模 & \bf 时间 \\
+\midrule
+Burrage和Estivill-Castro等\upcite{burrage2006undirected} & $O(k^{11})$ & 2006 \\
+Bodlaender\upcite{bodlaender2007cubic} & $O(k^3)$ & 2007 \\
+Thomass{\'e}等\upcite{thomasse2009quadratic} & $4k^2$ & 2009 \\
+\bottomrule[1.25pt]
+\end {tabular}
+\end{center}
+\end {table}

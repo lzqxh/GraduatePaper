@@ -24,8 +24,8 @@
 
 
 %对于NP-hard 问题，如果能基于参数k及问题规模n设计出时间复杂度为$O(f(k)n^{O(1)})$的算法，则称该问题是固定参数可解的。
-A NP-hard problem is called fixed-parameter tractable (FPT) with respect
-to a parameter k if it can be solved in time $O(f(k)n^{O(1)})$, where n is the input size and f is some
+An NP-hard problem is called fixed-parameter tractable (FPT) with respect
+to a parameter $k$ if it can be solved in time $O(f(k)n^{O(1)})$, where $n$ is the input size and $f$ is some
 computable function.
 %在理论计算机科学中，为NP-hard问题设计实际有效的固定参数算法是当前研究中一个重要的方向。
 In the area of theoretical computer science, designing FPT algorithms for NP-hard problems is an important research direction.
@@ -33,12 +33,12 @@ In the area of theoretical computer science, designing FPT algorithms for NP-har
 In this paper, we study two classical NP-hard problems, the Vertex Cover problem and the Feedback Vertex Set problem
 and design FPT algorithms for these problems respectively.
 %值得一提的是，本文中所有研究都是基于一般无向图，更加具有普遍性。
-It should be noted that all research in the paper are on general undirected graph.
+It should be noted that all algorithms in the paper are on general undirected graph.
 
 
 %在顶点覆盖问题上，我们设计了基于线性松弛下界的参数化顶点覆盖问题的固定参数算法。
 %该问题以目标顶点覆盖集大小和最小顶点覆盖集的线性松弛下界的差值作为算法的参数$\mu$。
-In this paper , we design an FPT algorithm for the Vertex Cover parameterized by the difference between the solution size and the LP lower bound
+In this paper, we design an FPT algorithm for Vertex Cover parameterized by the difference $\mu$ between the solution size and the LP lower bound
 (we call the problem Vertex Cover Above LP).
 %我们首先使用最大网络流来维护图的顶点覆盖集的线性松弛下界，
 Firstly, we use the maximum network flow to maintain the LP lower bound of Vertex Cover.
@@ -47,24 +47,22 @@ And then we successfully kernelize the input instance by the residual graph.
 %最后使用分支搜索树顺利获得一个时间复杂度为$O(2.618^\mu(\abs{V} + \abs{E}))$的线性固定参数算法。
 At last, we employ the case-by-case branching technique and obtain a linear-time FPT algorithm that runs in $O(2.618^\mu(\abs{V} + \abs{E}))$,
 %对比之前该方向最好的研究成果，Iwata等\upcite{iwata2014linear}提出的时间复杂度为$O(4^\mu(\abs{V} + \abs{E}))$的算法，复杂度上有了明显地下降。
-surpassing perviously fastest $O(4^\mu(\abs{V} + \abs{E}))$-time algorithm due to Iwata et al.(2014)\upcite{iwata2014linear}.
+surpassing perviously fastest linear-time FPT algorithm due to Iwata et al.(2014)\upcite{iwata2014linear} that runs in $O(4^\mu(\abs{V} + \abs{E}))$.
 
-%在反馈顶点集问题上，我们设计了一个复杂度为$\mathcal{O}(3.598^k)$的固定参数算法。
-For the Feedback Vertex Set problem parameterized by the solution size, we design a deterministic $\mathcal{O}(3.598^k)$-time FPT algorithm.
+%在反馈顶点集问题上，我们设计了一个复杂度为$\mathcal{O}^*(3.598^k)$的固定参数算法。
+For the Feedback Vertex Set problem parameterized by the solution size $k$, we design a deterministic $\mathcal{O}^*(3.598^k)$-time FPT algorithm.
 %其主要思路是，首先使用迭代压缩技术将问题转化成不相交反馈顶点集问题，
-The main idea is, we first employ the iterative compression technique in a standard manner to reduce the problem to the disjoint compression variant(Disjoint-FVS).
+In our algorithm, we first employ the iterative compression technique in a standard manner to reduce the problem to the disjoint compression variant(Disjoint-FVS).
 %之后我们使用分支搜索树来求解不相交反馈顶点集问题。在其中我们创新性地同时使用两个参数限制搜索树的规模。
-Then we use branching algorithm to cope the Disjoint-FVS problem.
-In the branching algorithm we use two parameters to analysis the size of the search tree innovatively.
-%当前在反馈顶点集问题上最好的固定参数算法是Kociumaka等\upcite{2013arXiv1306.3566K}提出的，复杂度是$\mathcal{O}(3.592^k)$。
+Then we use a branching rule to cope with the Disjoint-FVS problem.
+In the branching steps we use two parameters to analysis the size of the search tree innovatively.
+%当前在反馈顶点集问题上最好的固定参数算法是Kociumaka等\upcite{2013arXiv1306.3566K}提出的，复杂度是$\mathcal{O}^*(3.592^k)$。
 %与之对比，时间复杂度上十分接近，然而相比之下Kociumaka的算法一共使用了12条分支规则，而我们的算法只有1条更加简洁明了。
-Now the fastest algorithm on this problem due to Kociumaka et al.(2013)\upcite{2013arXiv1306.3566K} can run in $\mathcal{O}(3.592^k)$-time.
-Comparing with our algorithm, the time complexities are very close.
-But Kociumaka's algorithm have 12 branching rules and our algorithm only need one branching rule.
+The fastest known algorithm on this problem due to Kociumaka et al.(2013)\upcite{2013arXiv1306.3566K} runs in $\mathcal{O}^*(3.592^k)$-time,
+which is very close to our algorithm.
+But our algorithms is much simpler in that we use only one branching rule while Kociumaka uses twelve branching rules.
 
-
-\vspace{1cm} \noindent\textbf{Key Words}: Parameterized Complexity, Fixed-Parameterized Tractable Algorithm, NP-hard Problem, Vertex Cover, Feedback Vertex Set
-classification;
+\vspace{1cm} \noindent\textbf{Key Words}: Parameterized Complexity, Fixed-Parameter Tractable Algorithm, NP-hard Problem, Vertex Cover, Feedback Vertex Set
 %\setlength{\headsep}{25pt}
 
 \restoregeometry
