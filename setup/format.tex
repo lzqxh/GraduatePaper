@@ -174,9 +174,12 @@
 % 来使得当前章节编号深度增加或减小,num可取正值或负值.
 %*******取自ctex           定义目录格式   启用titletoc宏包
 %%******序号，标题间距等
-\titlecontents{chapter}[2.em]{\color{black}\normalsize}%\CJKfamily{hei}\addvspace{4ex}}
- {\contentslabel{2em}\hspace*{1.0em}}{\hspace*{-2.3em}}
- {\color{black}\titlerule*[0.4pc]{.}\contentspage}[\addvspace{0.5ex}]
+\titlecontents{chapter}
+[0.em]
+{\color{black}\normalsize}%\CJKfamily{hei}\addvspace{4ex}}
+{{第\CJKnumber{\thecontentslabel}章}\hspace*{1.0em}}
+{}
+{\color{black}\titlerule*[0.4pc]{.}\contentspage}[\addvspace{0.5ex}]
 
 \titlecontents{section}
 [3.4em] {\color{black}\normalsize}

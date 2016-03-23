@@ -1,4 +1,4 @@
-\section{VCAL问题分支算法}
+\section{VCAL问题的分支策略}
 上一章中，已经给出了基于线性松弛下界的参数化顶点覆盖问题（VCAL）的核心化算法，
 将图G在线性时间内收缩至满足全$\frac{1}{2}$函数是其LPVC唯一最优解（即$surplus(G) \ge 1$）。
 本章之中，我们将给出3条分支规则作用于核心化后的图上，
@@ -309,6 +309,7 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
   综上，搜索树的节点个数不超过$O(2.618^{\mu})$，每个节点只需要$O(\abs{V} + \abs{E})$的时间复杂度，总时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$。
 \end{proof}
 
+\newpage
 \subsection{伪代码}
 首先给出引理\ref{LemmaUpdateMaxflow}对应伪代码如下：
 \begin{algorithm}
@@ -327,6 +328,7 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
 \end{algorithmic}
 \end{algorithm}
 
+接着是完整的VCAL问题的分支算法，如下：
 \begin{algorithm}
 \caption{完整求解VCAL问题的分支算法}
 \begin{algorithmic}[1]

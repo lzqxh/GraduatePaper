@@ -1,18 +1,25 @@
 \chapter{基于线性松弛下界的参数化顶点覆盖问题}
-顶点覆盖问题(Vertex Cover, 缩写为VC),即对于参数k，询问给定图中是否存在大小不超过k的顶点集合满足：对于图中任意一条边的两个端点至少有一个在该集合中。
+顶点覆盖问题(Vertex Cover， 缩写为VC)，即对于参数k，询问给定图中是否存在大小不超过k的顶点集合满足：对于图中任意一条边的两个端点至少有一个在该集合中。
 该问题是最早被提出来的21个NP-complete问题之一\cite{karp1972reducibility}，也是最早证明是固定参数可解(Fixed parameter tractable)的问题\cite{downey2012parameterized}。
 
-本章提出了一个时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$的线性固定参数算法。
+本章针对顶点覆盖基于线性松弛下界的参数化版本（VACL）设计固定参数算法。
+我们在限制多项式部分复杂度为线性的前提下，尽量优化$f(k)$函数，
+最终设计出了一个时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$的线性固定参数算法。
+该算法由两部分组成核心化部分及分支搜索部分，其中核心化的方法我们使用了之前iwata等\upcite{iwata2014linear}的算法中使用的利用网络流来优化的方法，
+同时我们在该基础上通过对于分支搜索的策略优化使得整体算法的复杂度得到有效地降低。
 
 \section{相关术语及问题的定义}
+本节中，我们定义了算法中会使用的图论相关的术语并且引进了部分前人已经证明的结论。
+另外对于算法所解决的问题也给予了更加数学的全面的定义。
+
 \subsection{有关图的一些术语的定义}
-对于无向图$G=(V,E)$, V是图G的顶点集合, E是图G的边集合, 令$n = \abs{V}$表示图的顶点数量, $m = \abs{E}$表示图的边数量。
+对于无向图$G(V,E)$， V是图G的顶点集合，E是图G的边集合，令$n = \abs{V}$表示图的顶点数量， $m = \abs{E}$表示图的边数量。
 如果$e \in E$的两个端点分别为$u$和$v$，则使用集合$\{u, v \}$来表示边e。
-对于图顶点的某个子集$V' \subseteq V$, 我们定义图G的关于$V'$的导出子图为$G' = (V', E')$（简记为$G[V']$）, 其中$E' = \{\{u, v\} \in E\;|\;u \in V', v \in V' \}$。
+对于图顶点的某个子集$V' \subseteq V$， 我们定义图G的关于$V'$的导出子图为$G' = (V', E')$（简记为$G[V']$），其中$E' = \{\{u, v\} \in E\;|\;u \in V', v \in V' \}$。
 对于图G如下形式的导出子图$G[V \setminus V']$，我们有时会更加直观的写成$G \setminus V'$。
 
 设$v \in V$，定义由与v相邻的顶点构成的集合为$N_{G}(v) = \{ u \in V | \{u, v\} \in E\}$。
-同理对于$V' \subseteq V$, 定义$N_{G}(V') = (\bigcup_{u \in V'}N_{G}(u)) \setminus V' $。
+同理对于$V' \subseteq V$， 定义$N_{G}(V') = (\bigcup_{u \in V'}N_{G}(u)) \setminus V' $。
 同时因为在某些情况下讨论$V'$的邻居集合时候我们不需要排除其本身中的顶点，
 故额外定义$N_{G}[V'] = \bigcup_{u \in V'}N_{G}(u)$。
 （注意，在前后文没有歧义的情况下，我们会简称这三个集合为$N(v), N(V'),N[V']$）
@@ -21,32 +28,32 @@
 对于顶点集合$S$，与之相邻的边的集合，定义为$\delta(S) = \bigcup_{v \in S}\delta(v)$。
 
 \begin{definition}[顶点覆盖集]
-对于图$G(V, E)$, 若集合$V' \subseteq V$满足对于任意$\{u, v\} \in E$, $u \in V'$或者$v \in V'$, 则称$V'$是图G的一个顶点覆盖集。
+对于图$G(V, E)$， 若集合$V' \subseteq V$满足对于任意$\{u, v\} \in E$, $u \in V'$或者$v \in V'$， 则称$V'$是图G的一个顶点覆盖集。
 若$V'$是图G所有顶点覆盖集中最小的一个，则称顶点覆盖集$V'$是图$G$的最小顶点覆盖集。这里我们约定用$vc(G)$表示图G的最小顶点覆盖集大小。
 \end{definition}
 
 \begin{definition}[独立集]
-对于图$G(V, E)$, 若集合$V' \subseteq V$满足对于任意$u, v \in V'$, $\{u, v\} \notin E$, 则称$V'$是图G的一个独立集。
+对于图$G(V, E)$， 若集合$V' \subseteq V$满足对于任意$u, v \in V'$, $\{u, v\} \notin E$， 则称$V'$是图G的一个独立集。
 \end{definition}
 
 设$V' \subseteq V$是图G的一个独立集，定义盈余值$surplus(V') = \abs{N(V')} - \abs{V'}$。同时对于整个图G其盈余值$surplus(G)$等于其所有独立集的盈余值的最小值。
 
-对于有向图G(V, E),　若$e \in E$是从$u$到$v$的一条边，则使用元组$(u, v)$来表示边e。
-设$v$是有向图G的一个顶点, 我们使用$\delta^-(v)=\{(u, v) \in E\;|\;u \in V\}$来表示所有进入顶点v的边的集合，
+对于有向图$G(V, E)$，若$e \in E$是从$u$到$v$的一条边，则使用元组$(u, v)$来表示边e。
+设$v$是有向图G的一个顶点， 我们使用$\delta^-(v)=\{(u, v) \in E\;|\;u \in V\}$来表示所有进入顶点v的边的集合，
 用$\delta^+(v)=\{(v, u) \in E\;|\;u \in V\}$来表示所有从顶点v出发的边的集合。
-同样我们将这两个定义扩展到有向图G中的顶点集合, 令$S \subseteq V$,
-则$\delta^-(S)=\{(u, v) \in E\;|\;u \notin S, v \in S\}$表示所有进入S的边的集合,
+同样我们将这两个定义扩展到有向图G中的顶点集合， 令$S \subseteq V$，
+则$\delta^-(S)=\{(u, v) \in E\;|\;u \notin S, v \in S\}$表示所有进入S的边的集合，
 $\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边的集合。
 
 \begin{definition}[强连通分量(strongly connected component)]
 在有向图$G(V, E)$中，若集合$S \subseteq V$满足对于任意$u, v \in S$都存在一条路径可以从$u$到达$v$，则称S是有向图G中的一个强连通分量。
-如果集合S同时满足$\delta^+(S) = \emptyset$, 则称S是有向图G的一个尾强连通分量（tail strongly connected component）；
-相反，如果集合S同时满足$\delta^-(S) = \emptyset$, 则称S是有向图G的一个头强连通分量（head strongly connected component）。
+如果集合S同时满足$\delta^+(S) = \emptyset$， 则称S是有向图G的一个尾强连通分量（tail strongly connected component）；
+相反，如果集合S同时满足$\delta^-(S) = \emptyset$， 则称S是有向图G的一个头强连通分量（head strongly connected component）。
 \end{definition}
 
 在文献\cite{tarjan1972depth,sharir1981strong}中，已经分别给出了著名的Tarjan算法和Kosaraju算法。
 这两个算法都能在线性时间复杂度（即$O(n + m)$）内求得有向图的所有强连通分量。
-因为他们都是计算机领域非常重要且经典的算法，本文默认读者都已经对其有一定了解，后续不再进行展开，而是直接使用结论：\textbf{求有向图所有强连通分量可以在线性时间复杂度（$O(n + m)$）内完成}。
+因为它们都是计算机领域非常重要且经典的算法，本文默认读者都已经对其有一定了解，后续不再进行展开，而是直接使用结论：\textbf{求有向图所有强连通分量可以在线性时间复杂度（$O(n + m)$）内完成}。
 
 接下来我们给出网络及其流的定义。
 
@@ -66,72 +73,72 @@ $\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
   &\{(v,u)\;|\;(u, v) \in E,\;f(u, v) > 0\}
 \end{aligned} \end{equation*}
 
-在文献\cite{ford1962flows}, 已经给出著名的Ford-Fulkerson算法。本文也不打算对其进行展开，这里直接给出结论：
+在文献\cite{ford1962flows}， 已经给出著名的Ford-Fulkerson算法。本文也不打算对其进行展开，这里直接给出结论：
 \textbf{使用Ford-Fulkerson算法可以在$O(F(n + m))$时间复杂度内计算一个流量为F的s-t可行流；
 同时将一个s-t可行流增广$\Delta$流量所需时间复杂度为$O(\Delta(n + m))$。}
 
 \subsection{顶点覆盖问题的数学描述及其线性规划松弛}
 对于给定图$G(V, E)$， 求其最小顶点覆盖集合可以表示成下面整数规划模型：
-\begin{equation} \label{ModelLPVC1} \begin{aligned}
+\begin{equation} \label{ModelVC} \begin{aligned}
   minimize\; & (\textbf{val(x)} = \sum_{v \in V}{x(v)}) &\\
   subject\; to\; & x(u) + x(v) \ge 1, &(u, v) \in E \\
    & x(u) \in \{0, 1\}, & u \in V
 \end{aligned} \end{equation}
-其中对于图的每一个顶点$v$, 当$x(v) = 1$时表示该顶点被选进顶点覆盖集合中。
-显然上述整数规划模型的约束条件保证了对于图中的任意一条边中至少有一个点处于目标顶点覆盖集合中。
+其中对于图的每一个顶点$v$， 当$x(v) = 1$时表示该顶点被选进顶点覆盖集中。
+显然上述整数规划模型的约束条件保证了对于图$G$的任意一条边，至少有一个端点处于目标顶点覆盖集中。
 同时最小化目标函数$minimize\; \sum_{v \in V}{x(v)}$保证了该顶点覆盖集最小。这里我们用$vc(G)$表示最小顶点覆盖集合的大小。
 
 在整数规划模型中，取消值必须是整数的约束条件，被称为线性规划松弛，松弛后可以获得对应线性规划模型。
-这里我们对上面的模型\ref{ModelLPVC1}中$x(u) \in \{0, 1\}$的约束条件进行线性松弛，获得模型如下：
-\begin{equation} \begin{aligned}
+这里我们对上面的模型\ref{ModelVC}中$x(u) \in \{0, 1\}$的约束条件进行线性松弛，获得模型如下：
+\begin{equation} \label{ModelLPVC1} \begin{aligned}
   minimize\; & (\textbf{val(x)} = \sum_{v \in V}{x(v)}) &\\
   subject\; to\; & x(u) + x(v) \ge 1, &(u, v) \in E \\
    & 0 \le x(u) \le 1, & u \in V
 \end{aligned} \end{equation}
 
-这里我们用$LPVC(G)$来表示线性规划松弛后的顶点覆盖问题，
+对于线性规划松弛后的顶点覆盖问题，本文中我们用$LPVC(G)$来表示。
 用$vc^{*}(G)$来表示线性规划松弛后的顶点覆盖问题的最优解的值。
 显然，$vc(G) \ge vc^*(G)$。这里$vc^{*}(G)$是最小顶点覆盖的一个下界，我们称之为\textbf{线性松弛下界}。
 
-如果某个函数$x:V \rightarrow \mathbb{R}$， 满足上述模型中的所有约束条件，则x被称为$LPVC(G)$的一个解。
-在所有解中，$val(x)$达到最大化要求的，就是$LPVC(G)$的最优解。
+如果某个函数$x:V \rightarrow \mathbb{R}$， 满足上述模型\ref{ModelLPVC1}中的所有约束条件，则x被称为$LPVC(G)$的一个解。
+在所有解中，$val(x)$达到最小化要求的，就是$LPVC(G)$的最优解。
 另外如果对于所有顶点$v \in V$，有$x(v) = \frac{1}{2}$，
 则x被称为\textbf{全$\frac{1}{2}$函数}，如果它同时也是$LPVC(G)$的解则被称为\textbf{全$\frac{1}{2}$解}。
 
 
 
 早在19世纪80年代，纯粹的线性规划问题已经被证明是可以在多项式时间内求解的\cite{khachiian1979polynomial}。显然$vc^{*}(G)$也可以在多项式时间内获得。
-这里尽管由于线性规划松弛后的顶点覆盖问题中顶点的取值可以是分数，我们不能将$LPVC$的解直接转化成顶点覆盖问题的解，
-但是松弛后的线性规划问题还是为原问题的近似算法以及固定参数算法的设计提供了很多有价值的参考。下面我们给出若干$LPVC$的已经被证明的性质。
+这里尽管由于线性规划松弛后的顶点覆盖问题中顶点的取值可以是分数，我们不能将LPVC的解直接转化成顶点覆盖问题的解，
+但是松弛后的线性规划问题还是为原问题的近似算法以及固定参数算法的设计提供了很多有价值的参考。下面我们给出若干LPVC的已经被证明的性质。
 \begin{lemma}[\cite{nemhauser1975vertex}]
-对于图$G(V, E)$, 总是存在一个LPVC(G)的最优解$x$, 对于所有的$v \in V$ 满足$x(v) \in \{0, \frac{1}{2}, 1\}$。
-我们称x为LPVC(G)的一个半整数最优解，如果对于所有的$v \in V$有$x(v) = \frac{1}{2}$, 则称x是LPVC的全$\frac{1}{2}$最优解。
+对于图$G(V, E)$， 总是存在一个LPVC(G)的最优解$x$， 对于所有的$v \in V$ 满足$x(v) \in \{0, \frac{1}{2}, 1\}$。
+我们称x为LPVC(G)的一个半整数最优解，如果对于所有的$v \in V$有$x(v) = \frac{1}{2}$， 则称x是LPVC的全$\frac{1}{2}$最优解。
 \end{lemma}
 
 在后续章节中因为我们总是处理LPVC(G)的半整数解，所以默认情况下我们说x是LPVC(G)的解是指x是LPVC(G)的半整数解。
-同时为了更清晰的使用LPVC(G)的半整数解，我们约定对于$i \in \{0, \frac{1}{2}, 0\}$使用$V^x_i$表示集合$\{v \in V\;|\; x(v) = i\}$。
+同时为了更清晰的使用LPVC(G)的半整数解，我们约定对于$i \in \{0, \frac{1}{2}, 1\}$使用$V^x_i$表示集合$\{v \in V\;|\; x(v) = i\}$。
 
 \begin{lemma}[\cite{nemhauser1975vertex}]\label{relationBwtVCAndLPVC}
 如果x是LPVC(G)的最优解，那么存在一个图G的最小顶点覆盖集包含所有$V^x_1$中的顶点，并且不包含任何$V^x_0$中的顶点。
 \end{lemma}
 
-引理\ref{relationBwtVCAndLPVC}, 揭示了线性松弛后的问题与原问题的之间最直观的联系。后面我们会利用该引理来有效缩小原问题的规模。
+引理\ref{relationBwtVCAndLPVC}， 揭示了线性松弛后的问题与原问题的之间最直观的联系。后面我们会利用该引理来有效缩小原问题的规模。
 
 \begin{lemma}[\cite{nemhauser1975vertex}]\label{relationBwtSurplusAndLPVC}
 对于图$G(V, E)$，$surplus(G) \ge 0$等价于全$\frac{1}{2}$函数是$LPVC(G)$的一个最优解。
 进一步看，$surplus(G) \ge 1$等价于全$\frac{1}{2}$函数是$LPVC(G)$的唯一最优解。
 \end{lemma}
 
-引理\ref{relationBwtSurplusAndLPVC}, 给出图G盈余值$surplus(G)$与$LPVC(G)$问题之间的联系。
+引理\ref{relationBwtSurplusAndLPVC}， 给出图G盈余值$surplus(G)$与$LPVC(G)$问题之间的联系。
 
 
 \subsection{基于线性松弛下界的参数化顶点覆盖问题}
 在前面我们已经说到在顶点覆盖问题中$vc(G)\ge vc^*(G)$，
 当顶点覆盖固定参数算法中取所求顶点覆盖集大小k作为的参数，在$k < vc^*(G)$的时候算法可以立刻返回“NO”，此时k是无意义的。
-当且仅当$k \ge vc^*(G)$, 固定参数算法才是非平凡的。显然此处会很自然的考虑是不是所求顶点覆盖集大于$vc^*(G)$的部分才有实际意义，
+当且仅当$k \ge vc^*(G)$， 固定参数算法才是非平凡的。显然此处会很自然的考虑是不是所求顶点覆盖集大小大于$vc^*(G)$的部分才有实际意义，
 能不能以\textbf{\emph{所求顶点覆盖集大小减去$vc^*(G)$的值}}作为参数。
 
-现给出基于线性松弛下界的参数化顶点覆盖问题(VERTEX COVER ABOVE LP, 简称VCAL)的完整定义。\\
+现给出基于线性松弛下界的参数化顶点覆盖问题(VERTEX COVER ABOVE LP， 简称VCAL)的完整定义。\\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
@@ -143,7 +150,7 @@ $\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
 \end{tabular} \vspace{0.5cm}
 
 
-在文献\cite{narayanaswamy2012lp}中，作者最早定义了VCAL问题，并且基于分支与界法获得一个$\mathcal{O}^*(2.618^{\mu})$的FPT算法。
+在文献\cite{narayanaswamy2012lp}中，作者最早定义了VCAL问题，并且基于分支搜索技巧获得一个$\mathcal{O}^*(2.618^{\mu})$的FPT算法。
 在后续的研究中，Lokshtanov等将该问题的复杂度提升到了$\mathcal{O}^*(2.3146^{\mu})$ \upcite{lokshtanov2014faster}。
 这两个算法都是非常巧妙的，然而尽管他们在问题指数部分复杂度获得了一个优秀的上界，但是算法本身因为多项式部分糟糕的级别，实际执行效率并不高。
 针对该问题，Iwata等\upcite{iwata2014linear}尝试在缩小FPT算法指数部分的同时优化多项式部分复杂度，他们成功获得了一个时间复杂度为$O(4^{\mu}(n+m))$的线性固定参数算法。
@@ -151,8 +158,8 @@ $\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开S的边
 我们将在前人的研究基础上继续优化该问题，并成功获得时间复杂度为$O(2.618^{\mu}(n+m))$的线性固定参数算法，较之前的最好结果有了较大的改进。
 本章后面部分将给出具体算法及其证明分析。
 
-本文提出求解VCAL的算法主体部分是分支与界法，通过仔细设计分支规则以及分支前的核心化技巧，
+本文提出求解VCAL的算法主体部分是分支搜索，通过仔细设计分支规则以及分支前的核心化技巧，
 保证整棵搜索树的节点数量不超过$2.618^{k-vc^*(G)}$。
 同时我们借鉴Iwata等\upcite{iwata2014linear}核心化的思路，
 在搜索树的每个节点中，通过网络流算法Ford-Fulkerson来提升核心化的效率。
-最终成功获得多项式部分不超过$2.618^{k-vc^*(G)}$的线性固定参数算法（Almost linear FPT）。
+最终成功获得搜索树节点个数不超过$2.618^{k-vc^*(G)}$的线性固定参数算法。

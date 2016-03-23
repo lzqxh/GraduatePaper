@@ -1,6 +1,12 @@
 
 \section{将LPVC问题转换成最大网络流问题}
 
+LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性规划问题已经被证明是可以在多项式时间内求解的\upcite{khachiian1979polynomial}。
+然而我们算法的要求是希望每次在图发生改变之后更快地对新图进行求解。
+为了解决这一问题，本节中我们会将LPVC问题转换成最大网络流问题，维护最小顶点覆盖的线性松弛下界的任务因此也转换成了维护网络的最大流。
+
+具体做法是我们首先使用其对偶模型来表示LPVC问题，之后将基于其对偶模型构造等价的网络。
+
 \subsection{原始对偶技巧}
 基于线性规划问题的对偶性，所有纯粹线性规划问题存在对应的原始对偶模型。下面，我们将顶点覆盖问题进行线性松弛后的获得的LPVC问题（模型\ref{ModelLPVC1}）转化成其原始对偶模型，如下：
 \begin{equation} \label{ModelLPVC2} \begin{aligned}
@@ -76,7 +82,7 @@
 \end{property}
 \begin{proof}
 构造y如下，$y_{e = \{u, v\}} = \frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))$。
-此时对于任意顶点$v \in V$有, 
+此时对于任意顶点$v \in V$有,
 \[\sum\limits_{e \in \delta(v)}{y_e} = \sum\limits_{u \in N(v)}{\frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))} \le \frac{1}{2}(c(s, l_v) + c(r_v, t)) = 1\]
 因此y满足Dual-$LPVC(G)$约束。
 
@@ -94,4 +100,50 @@
           \end{cases}
 \end{equation*}
 
-\textcolor[rgb]{1.00,0.00,0.00}{待补充，证明x是最优解}
+\begin {table}[H]
+\caption {$x(v)$的取值情况} \label{tab:x_v}
+\begin{center}
+\begin{tabular}
+{|c|c|c|}
+\toprule[1.5pt]
+\bf $l_v$是否可达  & \bf $r_v$是否可达 & \bf $x(v)$ \\
+\midrule
+是  & 否 & 0\\
+是  & 是 & 1/2\\
+否  & 否 & 1/2\\
+否  & 是 & 1\\
+\bottomrule[1.25pt]
+\end {tabular}
+\end{center}
+\end {table} 
+
+\begin{lemma}
+按照上述方法构造出来的$x$是Primal-$LPVC(G)$的半整数最优解。
+\end{lemma}
+
+\begin{proof}
+对于该引理的证明，我们将分成两步，首先证明x是Primal-$LPVC(G)$的半整数解，再证明$val(x) = \frac{1}{2}F(f)$。
+由于前文该网络的性质已经告诉我们，网络W上的一个可行流$f$，对应一个图G上Dual-$LPVC(G)$模型的解$y$，且$val(y) = \frac{F}{2}$。
+因此$val(x) = val(y)$，根据引理\ref{relationBwtPrimalAndDual}，可以得知$x$是Primal-$LPVC(G)$的半整数最优解。
+
+首先证明x是Primal-$LPVC(G)$的半整数解。
+我们使用反证法。假设x并不是这样的一个半整数解。
+则存在图$G$的边$\{u, v\}$，使得$x(u) + x(v) \le 1$。不失一般性，令$x(u) = 0, x(v) \le 1/2$。 
+因此从表\ref{tab:x_v}我们可以看出，$l_u$可达，$r_u$不可达。
+有因为网络W中存在边$(l_v, r_u), (l_u, r_v)$，因此$r_v$也是可达的。
+通过表\ref{tab:x_v}可知，顶点v符合情况2，$l_v$可达，$r_v$可达。
+此时，在残余图$G_W(f)$中，我们发现了增广轨$s \rightarrow l_v \rightarrow r_u \rightarrow t$，这与$f$是最大流矛盾，因此假设不成立，x是Primal-$LPVC(G)$的半整数解。
+
+证明$val(x) = \frac{1}{2}F(f)$。
+令$A = \{l_v\;|\;\text{如果在图$G_W(f)$中，$l_v$是从s出发不可达的}\}, B = \{r_v\;|\;\text{如果在图$G_W(f)$中，$r_v$是从s出发可达的}\}$。
+观察表\ref{tab:x_v}，可以知$2val(x) = \abs{A} + \abs{B}$。
+如果不考虑任何残余图中的反向边，显然$\abs{A} = F(f)$。
+对于任何$r_v \in B$，显然存在顶点$l_u$使得$f(s, l_u) = f(l_u, r_v) = f(r_v, t) = 1$，否则残余图中会出现增广轨。
+顶点$l_u$原本是从s出发不可达的，考虑反向边$(r_v, l_u)$后，顶点$l_u$变成是从s出发可达的，因此$A$集合缩小1。
+依次考虑完所有B中顶点后，可得$\abs{A} = F(f) - \abs{B}$。
+综上有$val(x) = \frac{1}{2}(\abs{A} + \abs{B}) = \frac{1}{2}F(f)$。
+
+证毕。
+\end{proof}
+
+
