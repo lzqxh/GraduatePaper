@@ -16,20 +16,20 @@
 首先给出无向图上一些常见名词的定义，如环，树和森林等。
 \begin{definition}[环]
 对于无向图$G(V,E)$，假设存在一个顶点序列$v_1v_2...v_n$，使得$\{v_0, v_n\} \in E$并且对于任意$0 \le i < n$有$\{v_i, v_{i+1}\} \in E$。
-则该序列为图G上的一个\textbf{环}。如果该序列中没有重复顶点，则称之为图G的一个\textbf{简单环}。
+则该序列为图$G$上的一个\textbf{环}。如果该序列中没有重复顶点，则称之为图$G$的一个\textbf{简单环}。
 \end{definition}
 
 \begin{definition}[树(tree)和森林(forest)]
-对于无向图$G(V,E)$，如果其中不存在任何环，则我们称图G为一个\textbf{森林(forest)}。
-同时如果图G是连通的，则其也被称为\textbf{树(tree)}。
+对于无向图$G(V,E)$，如果其中不存在任何环，则我们称图$G$为一个\textbf{森林(forest)}。
+同时如果图$G$是连通的，则其也被称为\textbf{树(tree)}。
 \end{definition}
 
 \begin{definition}[反馈顶点集]
 对于图$G(V, E)$, 若集合$V' \subseteq V$使得$G \setminus V'$中不存在任何环（即，图$G \setminus V'$是森林）,
-则称$V'$是图G的一个\textbf{反馈顶点集}（Feedback Vertex Set, 简称$FVS$）。
+则称$V'$是图$G$的一个\textbf{反馈顶点集}（Feedback Vertex Set, 简称$FVS$）。
 \end{definition}
 
-为了方面对于算法的描述，我们继续引进一些图的术语。对于图G，$cc(G)$表示图G上连通块的个数。
+为了方面对于算法的描述，我们继续引进一些图的术语。对于图$G$，$cc(G)$表示图$G$上连通块的个数。
 
 \subsection{参数化反馈顶点集问题}
 对于一般图来说，回答是否存在大小不超过k的反馈顶点集，是非常经典组合优化问题。
@@ -41,7 +41,7 @@
   参数化反馈顶点集问题(Feedback Vertex Set，简称FVS) \\
   \textbf{输入：} 图$G(V, E)$及整数k \\
   \textbf{参数：} $k$\\
-  \textbf{问题：} 图G中是否存在一个反馈顶点集合，其大小不超过k\\
+  \textbf{问题：} 图$G$中是否存在一个反馈顶点集合，其大小不超过k\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
 

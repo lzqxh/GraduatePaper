@@ -19,13 +19,13 @@ LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性�
 下面的引理给出两个模型之间的联系。
 \begin{lemma} \label{relationBwtPrimalAndDual}
 对于图$G(V, E)$，假设函数$x$是其Primal-$LPVC(G)$上的解，函数$y$是其Dual-$LPVC(G)$上的解，则$val(x) \ge val(y)$。
-若$val(x) = val(y)$, 则x与y分别Primal-$LPVC(G)$和Dual-$LPVC(G)$上的最优解。
+若$val(x) = val(y)$, 则$x$与$y$分别Primal-$LPVC(G)$和Dual-$LPVC(G)$上的最优解。
 \end{lemma}
 \begin{proof}
-  对于任意E中的边$e = \{i, j\}$, 在Primal-$LPVC(G)$中有$x_i + x_j \ge 1$，在Dual-$LPVC(G)$中有$y_e \ge 0$。
+  对于任意$E$中的边$e = \{i, j\}$, 在Primal-$LPVC(G)$中有$x_i + x_j \ge 1$，在Dual-$LPVC(G)$中有$y_e \ge 0$。
   结合上述两个不等式，显然有，\[\sum\limits_{e=\{i, j\} \in E}{y_e(x_i + x_j)} \ge \sum\limits_{e \in E}{y_e}\]
 
-  对任意V中的顶点v, $x_v \ge 0$ 且 $\sum_{e \in \delta(v)}{y_e} \le 1$，显然结合上述两个不等式可以获得，
+  对任意V中的顶点$v$, $x_v \ge 0$ 且 $\sum_{e \in \delta(v)}{y_e} \le 1$，显然结合上述两个不等式可以获得，
   \[\sum\limits_{v \in V}{(\sum\limits_{e \in \delta(v)}{y_e})x_v} \le \sum\limits_{v \in V}{x_v}\]
 
   最后利用结合率，我们可以将$\sum_{e=\{i, j\} \in E}{y_e(x_i + x_j)}$整理成$\sum_{v \in V}{(\sum_{e \in \delta(v)}{y_e})x_v}$。
@@ -35,12 +35,12 @@ LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性�
   \]
 
   另外当$\sum\limits_{v \in V}{x_v} = \sum\limits_{e \in E}{y_e}$时，对任意满足Primal-$LPVC(G)$约束条件的$x'$,
-  我们可以获得$\sum\limits_{v \in V}{x'_v} \le \sum\limits_{e \in E}{y_e} = \sum\limits_{v \in V}{x_v}$。因此x是Primal-$LPVC(G)$的最优解，同理y也是Dual-$LPVC(G)$的最优解。
+  我们可以获得$\sum\limits_{v \in V}{x'_v} \le \sum\limits_{e \in E}{y_e} = \sum\limits_{v \in V}{x_v}$。因此$x$是Primal-$LPVC(G)$的最优解，同理$y$也是Dual-$LPVC(G)$的最优解。
 \end{proof}
 
 \subsection{将Dual-$LPVC(G)$转化成最大网络流问题} \label{TransformToNetwork}
-本节中我们首先将根据图$G(V, E)$构造一个网络W。
-之后并通过证明任意一个网络W上的可行流$f$与一个Dual-$LPVC(G)$模型的解$y$一一对应且$F(f) = 2val(y)$，
+本节中我们首先将根据图$G(V, E)$构造一个网络$W$。
+之后并通过证明任意一个网络$W$上的可行流$f$与一个Dual-$LPVC(G)$模型的解$y$一一对应且$F(f) = 2val(y)$，
 来证明求Dual-$LPVC(G)$模型的最优解等价与求解该网络上的最大流。
 最后，我们给出通过网络$W$最大可行流构造Primal-$LPVC(G)$与Dual-$LPVC(G)$最优解的方法。
 
@@ -59,7 +59,7 @@ LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性�
 \end{definition}
 
 \begin{property}
-图G上的一个Dual-$LPVC(G)$模型的解$y$,对应网路W上的一个流量为$2val(y)$的可行流。
+图$G$上的一个Dual-$LPVC(G)$模型的解$y$,对应网路$W$上的一个流量为$2val(y)$的可行流。
 \end{property}
 \begin{proof}
   首先，我们构造一个流量函数$f:E_W \rightarrow \mathbb{N}$, 如下：
@@ -74,11 +74,11 @@ LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性�
      \sum_{e\in \delta^+(l_v)}{f(e)} = f(s, l_v) = \sum\limits_{e \in \delta(v)}{y_e} = \sum_{u \in N(v)}{f(l_v, r_u)} = \sum_{e\in \delta^-(l_v)}{f(e)} \\
     \sum_{e\in \delta^+(r_v)}{f(e)} = \sum_{u \in N(v)}{f(l_u, r_v)}  = \sum\limits_{e \in \delta(v)}{y_e} = f(r_v, t) = \sum_{e\in \delta^-(r_v)}{f(e)}
   \end{aligned} \]
-  综上$f$是网络W上的一个\textbf{可行流}, 其流量$F = 2\sum_{e \in E}{y_e} = 2val(y)$（每条边上的$y_e$被计入两次）。证毕。
+  综上$f$是网络$W$上的一个\textbf{可行流}, 其流量$F = 2\sum_{e \in E}{y_e} = 2val(y)$（每条边上的$y_e$被计入两次）。证毕。
 \end{proof}
 
 \begin{property}
-网络W上的一个可行流$f$，对应一个图G上Dual-$LPVC(G)$模型的解$y$,且$val(y) = \frac{F}{2}$。
+网络$W$上的一个可行流$f$，对应一个图$G$上Dual-$LPVC(G)$模型的解$y$,且$val(y) = \frac{F}{2}$。
 \end{property}
 \begin{proof}
 构造y如下，$y_{e = \{u, v\}} = \frac{1}{2}(f(l_u, r_v) + f(l_v, r_u))$。
@@ -89,9 +89,9 @@ LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性�
 另外显然$val(y) = \sum_{e \in E}{y_e} = \frac{1}{2}\sum\limits_{\{u, v\}\in E}{(f(l_u, r_v) + f(l_v, r_u))} = \frac{F}{2}$。证毕。
 \end{proof}
 
-最后我们给出通过网络W上的最大可行流，构造Primal-$LPVC(G)$最优解方法。
+最后我们给出通过网络$W$上的最大可行流，构造Primal-$LPVC(G)$最优解方法。
 
-假设$f$是网络W上的最大可行流，则可以通过网络W在可行流$f$下的残余图$G_W(f)$构造Primal-$LPVC(G)$的半整数最优解x如下：
+假设$f$是网络$W$上的最大可行流，则可以通过网络$W$在可行流$f$下的残余图$G_W(f)$构造Primal-$LPVC(G)$的半整数最优解x如下：
 \begin{equation*}
   x_v = \begin{cases}
             0, & \mbox{如果在图$G_W(f)$中，$l_v$是从s出发可达的并且$r_v$是从s出发不可达的}  \\
@@ -115,24 +115,24 @@ LPVC问题求解的是最小顶点覆盖的线性松弛下界，纯粹的线性�
 \bottomrule[1.25pt]
 \end {tabular}
 \end{center}
-\end {table} 
+\end {table}
 
 \begin{lemma}
 按照上述方法构造出来的$x$是Primal-$LPVC(G)$的半整数最优解。
 \end{lemma}
 
 \begin{proof}
-对于该引理的证明，我们将分成两步，首先证明x是Primal-$LPVC(G)$的半整数解，再证明$val(x) = \frac{1}{2}F(f)$。
-由于前文该网络的性质已经告诉我们，网络W上的一个可行流$f$，对应一个图G上Dual-$LPVC(G)$模型的解$y$，且$val(y) = \frac{F}{2}$。
+对于该引理的证明，我们将分成两步，首先证明$x$是Primal-$LPVC(G)$的半整数解，再证明$val(x) = \frac{1}{2}F(f)$。
+由于前文该网络的性质已经告诉我们，网络$W$上的一个可行流$f$，对应一个图$G$上Dual-$LPVC(G)$模型的解$y$，且$val(y) = \frac{F}{2}$。
 因此$val(x) = val(y)$，根据引理\ref{relationBwtPrimalAndDual}，可以得知$x$是Primal-$LPVC(G)$的半整数最优解。
 
 首先证明x是Primal-$LPVC(G)$的半整数解。
-我们使用反证法。假设x并不是这样的一个半整数解。
-则存在图$G$的边$\{u, v\}$，使得$x(u) + x(v) \le 1$。不失一般性，令$x(u) = 0, x(v) \le 1/2$。 
+我们使用反证法。假设$x$并不是这样的一个半整数解。
+则存在图$G$的边$\{u, v\}$，使得$x(u) + x(v) < 1$。不失一般性，令$x(u) = 0, x(v) \le 1/2$。
 因此从表\ref{tab:x_v}我们可以看出，$l_u$可达，$r_u$不可达。
-有因为网络W中存在边$(l_v, r_u), (l_u, r_v)$，因此$r_v$也是可达的。
-通过表\ref{tab:x_v}可知，顶点v符合情况2，$l_v$可达，$r_v$可达。
-此时，在残余图$G_W(f)$中，我们发现了增广轨$s \rightarrow l_v \rightarrow r_u \rightarrow t$，这与$f$是最大流矛盾，因此假设不成立，x是Primal-$LPVC(G)$的半整数解。
+回顾网络$W$的构造，可知其中存在边$(l_v, r_u), (l_u, r_v)$并且边上的流量是无穷，因此残余图中$r_v$也是可达的。
+通过表\ref{tab:x_v}可知，顶点$v$符合情况2，$l_v$可达，$r_v$可达。
+此时，在残余图$G_W(f)$中，我们发现了增广轨$s \rightarrow l_v \rightarrow r_u \rightarrow t$，这与$f$是最大流矛盾，因此假设不成立，$x$是Primal-$LPVC(G)$的半整数解。
 
 证明$val(x) = \frac{1}{2}F(f)$。
 令$A = \{l_v\;|\;\text{如果在图$G_W(f)$中，$l_v$是从s出发不可达的}\}, B = \{r_v\;|\;\text{如果在图$G_W(f)$中，$r_v$是从s出发可达的}\}$。

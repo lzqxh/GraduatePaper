@@ -6,8 +6,8 @@ Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-F
   \hline
   \multicolumn{2}{|l|}{ \textbf{不相交反馈顶点集问题} }\\
   \multicolumn{2}{|l|}{ (Disjoint Feedback Vertex Set，简称Disjoint-FVS)}\\
-  \textbf{输入：} & 图$G(V, E)$，整数k 以及顶点集合V的划分$V = U \uplus D$满足$G[U]$和$G[D]$都是森林\\
-  \textbf{问题：} & 图G中是否存在一个反馈顶点集合$X \subseteq D$，其大小不超过k\\
+  \textbf{输入：} & 图$G(V, E)$，整数k 以及顶点集合$V$的划分$V = U \uplus D$满足$G[U]$和$G[D]$都是森林\\
+  \textbf{问题：} & 图$G$中是否存在一个反馈顶点集合$X \subseteq D$，其大小不超过k\\
   \hline
 \end{tabular} \vspace{0.5cm}
 
@@ -25,7 +25,7 @@ Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-F
 对于一个FVS问题实例$I = (G, k)$, 可以在可以在$\mathcal{O}^*(3.598^k)$时间复杂度内构成出大小不超过k的反馈顶点集合或者回答不存在这样的反馈定点集合。
 \end{theorem}
 \begin{proof}
-令$v_1, v_2, ..., v_n$是图G顶点集合V的任意排列，对于$1 \le i \le n$定义顶点集合$V_i = \{v_1, v_2, ..., v_i\}$和图$G_i = G[V_i]$。
+令$v_1, v_2, ..., v_n$是图$G$顶点集合$V$的任意排列，对于$1 \le i \le n$定义顶点集合$V_i = \{v_1, v_2, ..., v_i\}$和图$G_i = G[V_i]$。
 我们依次求解FVS问题实例$(G_i, k)$对于$i = k+1, ..., n$（注意：对于图$G_k$顶点集合$V_k$显然是反馈顶点集，不需要求解）。
 显然如果对于某个i，FVS问题实例$(G_i, k)$无解，那么原问题实例$I$也无解，因为图$G_i$是图$G$的一个导出子图。
 

@@ -1,42 +1,36 @@
 \chapter{相关问题研究现状}
-本章中我们会介绍参数计算领域的研究现状，其中重点介绍本文研究的两个NP-hard问题在该领域的研究成果。
+本章中我们会介绍参数计算领域的研究现状，其中重点介绍本文研究的两个NP-hard问题（顶点覆盖问题和反馈顶点集问题）在该领域的研究成果。
 \section{参数计算基本概念}
 %参数化问题 ， 固定参数可解，核心，规约
 \begin{definition} [参数化问题]
-参数化问题是一个判定型问题，其问题实例形式如下$I(Q, k)$，其中Q是我们需要解答的问题，k是一个非负整数称之为问题实例I的参数。
-如果问题Q存在满足参数k约束的解，则问题实例有解，否则问题实例无解。
+参数化问题是一个判定型问题，其问题实例形式如下$I(Q, k)$，其中$Q$是我们需要解答的问题，$k$是一个非负整数称之为问题实例$I$的参数。
+如果问题$Q$存在满足参数$k$约束的解，则问题实例有解，否则问题实例无解。
 \end{definition}
 
-很多NP-hard问题的标准参数化版本是用参数k约束目标解的规模，即询问问题Q是否存在一个大小小于k的解。
+很多NP-hard问题的标准参数化版本是用参数$k$约束目标解的规模，即询问问题$Q$是否存在一个大小小于$k$的解。
 当然，这并不是必须的，同一个NP-hard问题如果对于参数的定义不一样，可能会有多个参数化版本。
 在本章介绍参数化顶点覆盖问题的研究中，我们就会看到不同的参数化顶点覆盖问题。
 
 \begin{definition} [固定参数可解(Fixed-Parameter Tractable, 简称FPT)] \label{def_fpt}
-如果对于一个参数化问题的任何实例$I(Q, k)$，存在一个算法A都能在$O(f(k)n^c)$的时间负责度内判定其是否有解，
+如果对于一个参数化问题的任何实例$I(Q, k)$，存在一个算法$A$都能在$O(f(k)n^c)$的时间负责度内判定其是否有解，
 其中$f(k)$是一个可计算函数，$n$是问题Q的规模，$c$是一个与$n$和$k$无关的常数，
 则称该参数化问题是固定参数可解( FPT) 的。
-算法A称之为该问题的一个固定参数算法（FPT算法）。
+算法$A$称之为该问题的一个固定参数算法（FPT算法）。
 \end{definition}
 
 观察上述定义，我们看到一个固定参数算法的时间复杂度是由两部分组成的。对于NP-hard问题，$f(k)$函数的级别肯定是高于多项式的，而剩余部分$n^c$是关于问题规模的多项式函数。
 在很多情况下，因为多项式函数的增长远低于$f$函数，我们会忽略复杂度中多项式部分，而将一个固定参数算法的时间负责度直接记为$\mathcal{O}^*(f(k))$。
 
-\begin{definition} [\text{W[1]-hard}] \label{def_whard}
-如果对于一个参数化问题，不存在任何固定参数算法，则称该问题是W[1]-hard的。
-\end{definition}
-
-定义\ref{def_fpt}和定义\ref{def_whard}组成了参数计算中对于问题复杂度的定义。
-
 \begin{definition}[核(kernel)]
-如果对于一个参数化问题的任何实例$I(Q, k)$，存在一个算法A和关于k的函数$g(k)$,
-其中算法A能在多项式时间内将其转化成另外一个问题实例$I'(Q',k')$，
+如果对于一个参数化问题的任何实例$I(Q, k)$，存在一个算法$A$和关于$k$的函数$g(k)$,
+其中算法$A$能在多项式时间内将其转化成另外一个问题实例$I'(Q',k')$，
 使得$k' \le k$, 新问题实例中$Q'$的规模$n' \le g(k)$，并且问题实例I有解当且仅当新问题实例$I'$有解。
-则我们将$I'$称之为$I$的核，算法A称之为该参数化问题的一个核心化算法。
+则我们将$I'$称之为$I$的核，算法$A$称之为该参数化问题的一个核心化算法。
 \end{definition}
 
 \begin{definition}[参数化规约(简称fpt-规约)]
-对于一个参数化问题P，如果存在一个算法A可以在多项式时间内将其每个实例$I(Q, k)$转化成另外一个转化成另外一个参数化问题$P'$中对应的实例$I'(Q', k')$，
-并且$k' = g(k)$。则我们称问题P可以参数化规约到另外一个参数化问题$P'$。
+对于一个参数化问题$P$，如果存在一个算法$A$可以在多项式时间内将其每个实例$I(Q, k)$转化成另外一个转化成另外一个参数化问题$P'$中对应的实例$I'(Q', k')$，
+并且$k' = g(k)$。则我们称问题$P$可以参数化规约到另外一个参数化问题$P'$。
 \end{definition}
 
 注意上述两个定义中，核心化是在同个参数化问题里的实例之间的转化，而规约化则是问题之间的转化。
@@ -47,57 +41,58 @@
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
   参数化顶点覆盖问题(Vertex Cover) \\
-  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{输入：} 图$G(V, E)$及整数$k$ \\
   \textbf{参数：} $k$\\
-  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \textbf{问题：} 图$G$中是否存在一个顶点覆盖集合，其大小不超过$k$\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
 
 该问题的第一个FPT算法是由Buss和Goldsmith设计的，时间复杂度为$O(2^kk^{2k+2} + kn)$\upcite{buss1993nondeterminism}。
 之后的20多年了，有一系列研究在不断地改进其FPT算法的时间复杂度\upcite{balasubramanian1998improved,chen2001vertex,stege1999improved,niedermeier2003efficient,niedermeier1999upper,chen2000improvement}。
 当前最快的算法是由Chen和Kanj在2010提出的\upcite{chen2010improved}，他们成功将该问题的下界改进到$\mathcal{O}^*(1.2738^k)$。
-这其中大部分算法的设计是基于分支搜身技术，他们罗列出各种情形下适用的分支规则，并考虑最坏情况下的搜索树规模跟参数$k$之间的关系。
+这其中大部分算法的设计是基于分支搜索技术，他们罗列出各种情形下适用的分支规则，并考虑最坏情况下的搜索树规模跟参数$k$之间的关系。
 
 在设计FPT算法的同时也有一些研究人员对于参数化顶点覆盖问题的核感兴趣\upcite{chlebik2008crown,chen2001vertex,lampis2011kernel,soleimanfallah2011kernel}。
-已经证明了不可能存在核心化算法使得该问题的任意实例都能产生小于$O(ck)$的核，其中c是小于2的常数\upcite{chen2001vertex}。
+已经证明了不可能存在核心化算法使得该问题的任意实例都能产生小于$O(ck)$的核，其中c是小于2的常数\upcite{khot2008vertex}。
 目前最好的研究成果是文献\cite{lampis2011kernel}，在其中Lampis设计了一个算法对于任意常数c都能在多项式时间内生成一个$O(2k - c \log k)$级别的问题实例的核。
 
 在经典的参数化顶点覆盖问题中，到当$k$小于某些最小顶点覆盖集的下界时，讨论时间复杂度是没有意义的，此时问题是平凡的。
 于是在最几年该问题的研究中，研究人员开始聚焦于基于某些下界的参数化版本。
-如用$mm(G)$表示图G的最大匹配数，显然对于任意图最小顶点覆盖数总是大于等于其最大匹配数。
+如用$mm(G)$表示图$G$的最大匹配数，显然对于任意图最小顶点覆盖数总是大于等于其最大匹配数。
 在文献\cite{razgon2009almost}，作者Razgon and O'Sullivan定义了该问题的一个新参数$\mu_1 = k - mm(G)$，并且设计了一个时间复杂度为$\mathcal{O}^*(15^{\mu_1})$的FPT算法。
 这里给出该版本的参数化顶点覆盖问题的定义，如下\\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
   基于保证值的参数化顶点覆盖问题 \\ \ \ (Above-Guarantee Vertex Cover, 简称AGVC) \\
-  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{输入：} 图$G(V, E)$及整数$k$ \\
   \textbf{参数：} $\mu_1 = k - mm(G)$\\
-  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \textbf{问题：} 图$G$中是否存在一个顶点覆盖集合，其大小不超过$k$\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
-假设$vc^*(G)$表示图G的最小顶点覆盖线性松弛下界。在文献\cite{narayanaswamy2012lp, garg2015raising}中，又分别定义了参数$\mu_2 = k - vc^*(G)$和$\mu_3 = k - 2vc^*(G) + mm(G)$，
+假设$vc^*(G)$表示图$G$的最小顶点覆盖线性松弛下界。在文献\cite{narayanaswamy2012lp, garg2015raising}中，又分别定义了参数$\mu_2 = k - vc^*(G)$和$\mu_3 = k - 2vc^*(G) + mm(G)$，
 并且分别证明基于这两个参数定义的问题版本也是固定参数可解的。下面将这两个新问题的定义给出，如下： \\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
   基于线性松弛下界的参数化顶点覆盖问题 \\ \ \ (Vertex Cover Above LP, 简称VCAL) \\
-  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{输入：} 图$G(V, E)$及整数$k$ \\
   \textbf{参数：} $\mu_2 = k - vc^*(G)$\\
-  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \textbf{问题：} 图$G$中是否存在一个顶点覆盖集合，其大小不超过$k$\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
   基于Lov\'asz-Plummer下界的参数化顶点覆盖问题 \\ \ \ (Vertex Cover Above Lov\'asz-Plummer, 简称VCAL-P) \\
-  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{输入：} 图$G(V, E)$及整数$k$ \\
   \textbf{参数：} $\mu_3 = k - 2vc^*(G) + mm(G)$\\
-  \textbf{问题：} 图G中是否存在一个顶点覆盖集合，其大小不超过k\\
+  \textbf{问题：} 图$G$中是否存在一个顶点覆盖集合，其大小不超过$k$\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
 
-在这个4个不同的参数化顶点覆盖版本，可以证明其中4个参数大小关系有$k \le \mu_1 \le \mu_2 \le \mu_3$。在表\ref{tab:vcfpt}中，我们列举了近几年中对于这几个参数化顶点覆盖问题的研究成果。
+在这个4个不同的参数化顶点覆盖版本中，可以证明其中$4$个参数大小关系有$k \ge \mu_1 \ge \mu_2 \ge \mu_3$，显然参数越小问题更加具有实际意义。
+在表\ref{tab:vcfpt}中，我们列举了近几年中对于这几个参数化顶点覆盖问题的研究成果。
 \begin {table}[H]
 \caption {参数化顶点覆盖问题FPT算法} \label{tab:vcfpt}
 \begin{center}
@@ -122,14 +117,14 @@ VCAL-P    &  Garg等\upcite{garg2015raising}                 & $\mathcal{O}^*(3^
 
 \section{参数化反馈顶点集问题研究}
 反馈顶点集问题也是最早被证明是NP难的21个问题之一\upcite{karp1972reducibility}，
-同样也有很多研究人员研究参数计算领域的该问题。这里我们首先给出参数化反馈顶点问题的完整定义，如下:\\
+同样也有很多研究人员在参数计算领域下研究该问题。这里我们首先给出参数化反馈顶点问题的完整定义，如下:\\
 
 \begin{tabular}{| p{0.9\headwidth} |}
   \hline
   参数化反馈顶点集问题(Feedback Vertex Set，简称FVS) \\
-  \textbf{输入：} 图$G(V, E)$及整数k \\
+  \textbf{输入：} 图$G(V, E)$及整数$k$ \\
   \textbf{参数：} $k$\\
-  \textbf{问题：} 图G中是否存在一个反馈顶点集合，其大小不超过k\\
+  \textbf{问题：} 图$G$中是否存在一个反馈顶点集合，其大小不超过$k$\\
   \hline
 \end{tabular} \vspace{0.5cm} \\
 
