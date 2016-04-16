@@ -1,8 +1,8 @@
-\section{伪代码}
-本节里，我们会给出求解FVS问题的固定参数算法伪代码。
-我们将算法分解成两个函数，Disjoint-FVS函数求解不相交反馈顶点集问题，FeedbackVertexSet函数是完整的反馈顶点集算法其中会调用到Disjoint-FVS函数。
+\section{小结}
 
-首先给出Disjoint-FVS算法，如\ref{disjoint-fvs-algorithm}节所描述的这是一个分支搜索算法。
+在本节中我们首先给出本章算法的伪代码，如下。
+
+我们将算法分解成两个函数。首先给出Disjoint-FVS算法，如\ref{disjoint-fvs-algorithm}节所描述的这是一个分支搜索算法。
 每次进入递归函数，首先应用收缩规则进行收缩，之后如果程序没有到达多项式可解或者到达不可能存在合法解的情形，我们选取顶点并进行分支搜索。具体伪代码，如下：\\
 
 \begin{algorithm}
@@ -19,7 +19,7 @@
     \If {$D = T$ }
         \State 在多项式时间内求解当前问题并返回结果 \Comment 引理\ref{Disjoint-FVSSolvable}
     \Else
-        \State 取$D$中至少有3个邻居在$U$中的任一顶点$v$ 
+        \State 取$D$中至少有3个邻居在$U$中的任一顶点$v$
         \State \Comment 引理\ref{vertexNDge3}表明这样的顶点一定存在
         \State $branchA \gets \text{Disjoint-FVS}(G \setminus v, U, D \setminus v, k - 1)$
         \Comment 分支1: $v \in FVS$
@@ -29,7 +29,7 @@
     \EndIf
 \EndFunction
 \end{algorithmic}
-\end{algorithm} 
+\end{algorithm}
 
 \newpage
 最后是完整的FVS问题算法，如前文所述其中我们使用了迭代压缩技术，通过依次加入每个顶点来最终求解完整问题实例。
@@ -48,14 +48,17 @@
         \State $V_i \gets V_i \cup v, G_i \gets G[V_i], D \gets V_i \setminus X$
         \State $Z \gets X \cup \{v\}$
         \State \textbf{If} $\abs{Z} \le k$ \textbf{then} 令$X \gets Z$并且\textbf{continue}
-        \For {遍历所有Z的子集$Y \subseteq Z$}
+        \For {遍历所有$Z$的子集$Y \subseteq Z$}
             \State \textbf{If} $G[Z \setminus Y]$不是森林 \textbf{then} \textbf{continue}
             \State $result \gets \text{Disjoint-FVS}(G_i \setminus Y, Z \setminus Y, D, k - \abs{Y})$
             \State \textbf{If} $result$不是“NO” \textbf{then} 令$X \gets Y \cup result$并且\textbf{break}
         \EndFor
-        \State \textbf{If} 对于所有Z的子集$result$均是“NO” \textbf{then} \Return “NO”
+        \State \textbf{If} 对于所有$Z$的子集$result$均是“NO” \textbf{then} \Return “NO”
     \EndFor
     \State \Return X
 \EndFunction
 \end{algorithmic}
-\end{algorithm} 
+\end{algorithm}
+
+至此，本章中完整地给出了一个求解经典参数化反馈顶点集问题的确定性固定参数算法，
+时间复杂度为$\mathcal{O}^*(3.598)$。

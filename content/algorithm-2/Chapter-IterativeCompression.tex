@@ -1,40 +1,31 @@
 \section{使用迭代压缩技术转化FVS问题}
-与近年来大多数FVS问题的参数算法相似，我们首先基于迭代压缩技术将FVS问题转化成另外一个与之高度相关的问题，
-Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-FVS问题的详细定义：\\
+与近年来大多数FVS问题的参数算法相似，我们基于迭代压缩技术将FVS问题转化成另外一个与之高度相关的问题，
+Disjoint-FVS问题。
 
-\begin{tabular}{ | p{0.06\headwidth} p{0.80\headwidth} | }
-  \hline
-  \multicolumn{2}{|l|}{ \textbf{不相交反馈顶点集问题} }\\
-  \multicolumn{2}{|l|}{ (Disjoint Feedback Vertex Set，简称Disjoint-FVS)}\\
-  \textbf{输入：} & 图$G(V, E)$，整数k 以及顶点集合$V$的划分$V = U \uplus D$满足$G[U]$和$G[D]$都是森林\\
-  \textbf{问题：} & 图$G$中是否存在一个反馈顶点集合$X \subseteq D$，其大小不超过k\\
-  \hline
-\end{tabular} \vspace{0.5cm}
-
-首先，我们直接给出关于Disjoint-FVS问题的时间复杂度，并基于该结论和迭代压缩技术，给出FVS问题的时间复杂度。
+在本节中首先，我们直接给出关于Disjoint-FVS问题的时间复杂度\footnote{定理\ref{Disjoint-FVSTime}的证明在下一节}，并基于该结论和迭代压缩技术，给出FVS问题的时间复杂度。
 之后，本章的剩余部分将注意力集中在Disjoint-FVS问题上，证明下述结论的正确性。
 \begin{theorem} \label{Disjoint-FVSTime}
   对于一个Disjoint-FVS问题实例$I = (G, U, D, k)$，可以在$\mathcal{O}^*(C^k_{k + cc(G[U])/2})$时间复杂度内构成出符合条件的反馈顶点集合或者回答不存在这样的反馈顶点集合。
 \end{theorem}
 
 在定理\ref{Disjoint-FVSTime}中,我们使用了组合计数的方式来表达其复杂度，不过这并不是最终结果。
-在后续应用中，我们只处理参数k与图$G[U]$连通块个数成一定比例的Disjoint-FVS问题实例，在这样情况下可以使用Stirling公式将其化简成$c^k$形式。
+在后续应用中，我们只处理参数$k$与图$G[U]$连通块个数成一定比例的Disjoint-FVS问题实例，在这样情况下可以使用Stirling公式将其化简成$c^k$形式。
 
 在定理\ref{Disjoint-FVSTime}的基础上，我们应用迭代压缩技术构造出下面求解FVS问题的算法。
 \begin{theorem}
-对于一个FVS问题实例$I = (G, k)$, 可以在可以在$\mathcal{O}^*(3.598^k)$时间复杂度内构成出大小不超过k的反馈顶点集合或者回答不存在这样的反馈定点集合。
+对于一个FVS问题实例$I = (G, k)$, 可以在可以在$\mathcal{O}^*(3.598^k)$时间复杂度内构成出大小不超过$k$的反馈顶点集合或者回答不存在这样的反馈定点集合。
 \end{theorem}
 \begin{proof}
 令$v_1, v_2, ..., v_n$是图$G$顶点集合$V$的任意排列，对于$1 \le i \le n$定义顶点集合$V_i = \{v_1, v_2, ..., v_i\}$和图$G_i = G[V_i]$。
-我们依次求解FVS问题实例$(G_i, k)$对于$i = k+1, ..., n$（注意：对于图$G_k$顶点集合$V_k$显然是反馈顶点集，不需要求解）。
-显然如果对于某个i，FVS问题实例$(G_i, k)$无解，那么原问题实例$I$也无解，因为图$G_i$是图$G$的一个导出子图。
+我们依次求解FVS问题实例$(G_i, k)$对于$i = k+1, ..., n$。\footnote{注意，对于问题实例$(G_k, k)$顶点集合$V_k$显然是符合条件的反馈顶点集，不需要进行求解}
+显然如果对于某个$i$，FVS问题实例$(G_i, k)$无解，那么原问题实例$I$也无解，因为图$G_i$是图$G$的一个导出子图。
 
-如果我们已经获得图$G_i$上大小不超过k的反馈顶点集合$X_i$，那么集合$X_i \cup \{v_{i+1}\}$则构成了图$G_{i+1}$的一个大小不超过k+1反馈顶点集合。
+如果我们已经获得图$G_i$上大小不超过$k$的反馈顶点集合$X_i$，那么集合$X_i \cup \{v_{i+1}\}$则构成了图$G_{i+1}$的一个大小不超过$k+1$反馈顶点集合。
 令$Z = X_i \cup \{v_{i+1}\}, D = V_i \setminus X_i = V_{i+1} \setminus Z$。
 由定义可知$G_{i+1}[D] = G_i[D]$是一个森林。
 
-接下来，我们枚举集合$Z$的所有子集$Y$，尝试回答当图$G_{i+1}$的反馈顶点集一定包含所有Y中顶点，并且一定不包含$Z \setminus Y$中顶点时，
-其大小是否能够不超过k。令$U = Z \setminus Y$，显然当$G[U]$不是一个森林时，肯定不存在符合要求的反馈顶点集，因此我们后续只讨论$G[U]$是森林的情况。
+接下来，我们枚举集合$Z$的所有子集$Y$，尝试回答当图$G_{i+1}$的反馈顶点集一定包含所有$Y$中顶点，并且一定不包含$Z \setminus Y$中顶点时，
+其大小是否能够不超过$k$。令$U = Z \setminus Y$，显然当$G[U]$不是一个森林时，肯定不存在符合要求的反馈顶点集，因此我们后续只讨论$G[U]$是森林的情况。
 此时根据上述约束，我们可以把当前的问题转换成Disjoint-FVS问题实例$I_Y = (G_{i+1} \setminus Y, U, D, k-\abs{Y})$。
 由定理\ref{Disjoint-FVSTime}，可以得知求解问题实例$I_Y$的时间复杂度为$\mathcal{O}^*(C^k_{k + cc(G[U])/2})$，其中$cc(G[U]) \le \abs{U} = k - \abs{Y}$，
 故时间复杂度可以化简成，$\mathcal{O}^*(C^{k - \abs{Y}}_{3(k - \abs{Y})})$。
@@ -48,7 +39,7 @@ Disjoint-FVS问题（Disjoint Feedback Vertex Set）。下面，给出Disjoint-F
    = \mathcal{O}^*(\sum_{Y \subseteq Z}1.61185^{k - \abs{Y}})
    = \mathcal{O}^*((1 + 1.61185^2)^k) = \mathcal{O}^*(3.598^k)
 \end{equation*}
-从$G_{k+1}$到$G_n$，我们重复上述过程n - k次便可以求解原FVS问题实例$(G, k)$，整个过程时间复杂度也可以表示成$\mathcal{O}^*(3.598^k)$。
+从$G_{k+1}$到$G_n$，我们重复上述过程$n - k$次便可以求解原FVS问题实例$(G, k)$，整个过程时间复杂度也可以表示成$\mathcal{O}^*(3.598^k)$。
 
 证毕。
 \end{proof}

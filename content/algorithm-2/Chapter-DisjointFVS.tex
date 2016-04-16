@@ -4,32 +4,33 @@
 
 \subsection{Disjoint-FVS问题实例的评估}
 我们的算法与之前Cao\upcite{cao2010feedback}和Kociumaka\upcite{kociumaka2014faster}的算法相似，
-与这两个算法相比，我们创新性地使用一个二元组来评估Disjoint-FVS问题实例的复杂程度（改变使用单个数值来评估的方式）。
+与这两个算法相比，我们创新性地使用一个二元组来评估Disjoint-FVS问题实例的复杂程度\footnote{改变之前一直使用单个数值来评估Disjoint-FVS问题实例的方式}。
 这在以前的参数算法文献中，也是十分罕见的。本节中，我们将给出具体的评估方法以及对其边界的证明。
 
 首先，得益于前人的工作成果\upcite{cao2010feedback}，我们知道某些情况下Disjoint-FVS问题是存在多项式解法的，
 对于这部分满足条件的顶点，我们并不需要对进行枚举，而是可以在枚举完所有其他顶点后，直接在多项式时间内求解剩余问题。
 下面，我们引入其中一个算法，如下：
-\begin{lemma} \label{Disjoint-FVSSolvable}
+\begin{lemma} [\cite{cao2010feedback}] \label{Disjoint-FVSSolvable}
 对于一个Disjoint-FVS问题实例$(G, U, D, k)$，如果所有的顶点$v \in D$，满足其邻居数量$\abs{N(v)} \le 3$，
 那么存在一个时间复杂度为$O(n^2log^6n)$的多项式算法，或者构造出图$G$的反馈顶点集$X$满足$\abs{X} \le k$并且$X \subseteq D$，
 或者回答不存在这样的反馈顶点集。
 \end{lemma}
 
 定义顶点集合$T = \{v \in D\;|\;\abs{N(v)} = 3 \text{ 并且 } N(v) \subseteq U\}$。
-根据引理\ref{Disjoint-FVSSolvable}，我们并不需要对顶点集合T中的顶点进行枚举。
-接下来，给出一个引理对顶点集合T的大小进行分析。
+根据引理\ref{Disjoint-FVSSolvable}，我们并不需要对顶点集合$T$中的顶点进行枚举。
+接下来，给出一个引理对顶点集合$T$的大小进行分析。该引理也来源于Cao等的贡献，为了算法的完整性此处我们也给出其简单证明。
 
-\begin{lemma} \label{Disjoint-FVSLimit}
+\begin{lemma} [\cite{cao2010feedback}] \label{Disjoint-FVSLimit}
 对于Disjoint-FVS问题实例$I(G, U, D, k)$，如果$k + \frac{cc(G[U])}{2} - \abs{T} < 0$那么该实例肯定没有符合条件的解。
 \end{lemma}
 
 \begin{proof}
-我们通过证明该命题的逆反命题，来证明引理的正确性。
+我们通过证明该命题的逆反命题，如果Disjoint-FVS问题实例$I(G, U, D, k)$有解，则$k + \frac{cc(G[U])}{2} - \abs{T} \ge 0$，来证明引理的正确性。
 
-假设顶点集合X是图$G$的一个反馈顶点集合，并且$X \subseteq D, \abs{X} \le k$，即问题实例I存在符合条件的解X。
-则对于任意顶点$v \in (T \setminus X)$，v连接了3个不同的$G[U]$的连通块，所以$cc(G[U]) \ge 2\abs{T\setminus X} + 1$。
-结合$\abs{X} \le k$， 可以获得，$\abs{T} = \abs{X \cap T} + \abs{T \setminus X} < k + \frac{cc(G[U])}{2}$。
+假设顶点集合$X$是图$G$的一个反馈顶点集合，并且$X \subseteq D, \abs{X} \le k$，即$X$是问题实例I符合条件的解。
+则对于任意顶点$v \in (T \setminus X)$，$v$连接了$3$个不同的$G[U]$的连通块，所以$cc(G[U]) \ge 2\abs{T\setminus X} + 1$。
+结合$\abs{X} \le k$， 可以获得，$\abs{T} = \abs{X \cap T} + \abs{T \setminus X} \le k + \frac{cc(G[U]) - 1}{2}$。
+整理得，$k + \frac{cc(G[U])}{2} - \abs{T} \ge \frac{1}{2}$。
 
 证毕。
 \end{proof}
@@ -49,25 +50,25 @@
 说该规则是有效的，则意味着其两个评估参数都没有上升，即$u_1(I') \le u_1(I), u_2(I') \le u_2(I)$。 \\
 
 \begin{reducerule}
-移除图$G$中所有度数为1的顶点。
+移除图$G$中所有度数为$1$的顶点。
 \end{reducerule}
 
 \begin{reducerule}
-如果存在一个顶点$v \in D$，其有两个邻居在图$G[U]$的同一个连通块中，则移除顶点$v$并令k减少1, 即令$G \leftarrow G \setminus v, k \leftarrow k - 1$。
+如果存在一个顶点$v \in D$，其有两个邻居在图$G[U]$的同一个连通块中，则移除顶点$v$并令$k$减少$1$, 即令$G \leftarrow G \setminus v, k \leftarrow k - 1$。
 \end{reducerule}
 
 \begin{reducerule}
-如果存在一个顶点$v \in D$，其度数为2且至少有一个邻居在$U$中，则将其从顶点集合D中移到顶点集合U中，即令$U \leftarrow U \cup \{v\}, D \leftarrow D \setminus \{v\}$。
+如果存在一个顶点$v \in D$，其度数为$2$且至少有一个邻居在$U$中，则将其从顶点集合$D$中移到顶点集合$U$中，即令$U \leftarrow U \cup \{v\}, D \leftarrow D \setminus \{v\}$。
 \end{reducerule}
 
 \begin{reducerule}
-如果存在一个顶点$v \in D$，其度数为2，则其删除并且在它的两个邻居间连一条边，即令$G \leftarrow G \setminus \{v\}, E(G) \leftarrow E(G) \cup N(v)$。
+如果存在一个顶点$v \in D$，其度数为$2$，则其删除并且在它的两个邻居间连一条边，即令$G \leftarrow G \setminus \{v\}, E(G) \leftarrow E(G) \cup N(v)$。
 \end{reducerule}
 
 
 \begin{reducerule}
-如果存在一个度数为3的顶点$v \in D$，满足$\abs{D \cap N(v)} = 1$，
-假设其3个顶点分别为$w \in D, u_1 \in U, u_2 \in U$，
+如果存在一个度数为$3$的顶点$v \in D$，满足$\abs{D \cap N(v)} = 1$，
+假设其$3$个顶点分别为$w \in D, u_1 \in U, u_2 \in U$，
 删除顶点$v$和$w$之间的边，添加新顶点$z$属于顶点集合$U$，并且连接其与顶点$w$和$v$，
 即令$Z \leftarrow Z \cup \{z\}, E(G) \leftarrow E(G) \cup \{e_{zw}, e_{zv}\} \setminus \{e_{wv}\}$。
 \end{reducerule}
@@ -81,40 +82,40 @@
 收缩规则 1-5都是安全且有效的。
 \end{lemma}
 \begin{proof}
-对于收缩规则1，度数为1的顶点不可能存在于任何环中，可以直接忽略。
+对于收缩规则1，度数为$1$的顶点不可能存在于任何环中，可以直接忽略。
 对于收缩规则2，如果不将顶点$v$取进反馈顶点集中，则剩余图必然存在环。
 因此规则1和2都是安全的。
 
-而在规则3、4中，我们可以证明假设存在一个满足问题实例$I(G, U, D, k)$的反馈顶点集X包含顶点$v$，那么一定可以构造另外一个符合条件的反馈顶点集$X'$不包含顶点$v$。
+而在规则3、4中，我们可以证明假设存在一个满足问题实例$I(G, U, D, k)$的反馈顶点集$X$包含顶点$v$，那么一定可以构造另外一个符合条件的反馈顶点集$X'$不包含顶点$v$。
 假设图$G \setminus (X \setminus \{v\})$中存在环（否则可以令$X' = X \setminus \{v\}$），
 因为图$G \setminus X$不存在环，所以图$G \setminus (X \setminus \{v\})$中的环肯定经过顶点$v$，
 又因为顶点$v$度数为$2$且其邻居不属于同一个$G[U]$连通块（否则会应用收缩规则2），所以环仅有一个并且环上一定有顶点不属于$U$，我们取其中一个记为$u$。
 构造$X' = X \setminus \{v\} \cup \{u\}$，显然符合要求。因此规则3和4都是安全的。
 
-对于这4条规则，显然k和$cc(G[U])$都不会上升。而集合T缩小只可能发生在规则1删除一个属于U的顶点时，并且此时$cc(G[U])$也会减少1。因此这4条规则都是有效的。
+对于这4条规则，显然k和$cc(G[U])$都不会上升。而集合T缩小只可能发生在规则$1$删除一个属于$U$的顶点时，并且此时$cc(G[U])$也会减少1。因此这4条规则都是有效的。
 
-最后讨论收缩规则5，收缩规则５使得新的问题实例增加了一个顶点$z \in U$，然而并没有增加任何新的环。
+最后讨论收缩规则5，收缩规则5使得新的问题实例增加了一个顶点$z \in U$，然而并没有增加任何新的环。
 可以观察到如果新图上的环经过顶点$z$，那么这个环在原图上也存在，其经过了边$e_{wv}$。
-因此，在应用规则5前后的两个问题实例上求解反馈顶点集实际上是等价的，即规则５是安全的。
-观察收缩规则５在创造一个新的图$cc(G[U])$的连通块的同时，令顶点$v$满足$\abs{N(v)} = 3$并且$N(v) \subseteq U$，因此顶点集合$T$也增加了１。
-故，应用完收缩规则５有，$u_a(I') = u_a(I) = k, u_b(I') = u_b(I) + 1/2 - 1 = u_b(I) - 1/2$。因此收缩规则５也是安全有效的。
+因此，在应用规则5前后的两个问题实例上求解反馈顶点集实际上是等价的，即规则5是安全的。
+观察收缩规则5在创造一个新的图$cc(G[U])$的连通块的同时，令顶点$v$满足$\abs{N(v)} = 3$并且$N(v) \subseteq U$，因此顶点集合$T$也增加了$1$。
+故，应用完收缩规则5有，$u_a(I') = u_a(I) = k, u_b(I') = u_b(I) + 1/2 - 1 = u_b(I) - 1/2$。因此收缩规则5也是安全有效的。
 
 证毕。
 \end{proof}
 
 
 \subsection{分支规则}
-前文已经提到，我们的算法是基于分支搜索的，每次会从顶点集合D中取出一个顶点，通过假设它存在于反馈顶点集或者不存在来获得两个搜索分支。
+前文已经提到，我们的算法是基于分支搜索的，每次会从顶点集合$D$中取出一个顶点，通过假设它存在于反馈顶点集或者不存在来获得两个搜索分支。
 为了获得更加优秀运行时间上界，我们希望通过选择最合适的顶点，以提高评估函数$\mu(I)$的下降程度。
 本节中我们首先给出合适的选择顶点的方法，并且对应用分支规则后的两个问题实例的评估函数变化进行分析。
 
 \begin{lemma} \label{vertexNDge3}
 对于Disjoint-FVS问题实例$I(G,U,D,k)$，当收缩规则1-5都不能应用且顶点集合$D \setminus T$非空时，
-至少存在一个顶点$v \in (D \setminus T)$，其邻居中至少有3个顶点在集合U。
+至少存在一个顶点$v \in (D \setminus T)$，其邻居中至少有$3$个顶点在集合$U$。
 \end{lemma}
 \begin{proof}
-首先，收缩规则1-5都不能应用可以推导出D中所有顶点度数都大于等于３。
-其次顶点集合$D \setminus T$的导出子图是森林，取森林的任意孤立节点或者叶子结点v，顶点$v$满足$\abs{N(v) \cap D} \le 1$。
+首先，收缩规则1-5都不能应用可以推导出$D$中所有顶点度数都大于等于$3$。
+其次顶点集合$D \setminus T$的导出子图是森林，取森林的任意孤立节点或者叶子结点$v$，顶点$v$满足$\abs{N(v) \cap D} \le 1$。
 再结合顶点$v$不满足收缩规则5的应用条件，可以得知顶点$v$至少有3个邻居在U中。
 \end{proof}
 
@@ -123,7 +124,7 @@
 \begin{tabular}{ p{0.9\headwidth} }
   \hline
   \textbf{分支规则}\\
-  \textbf{前提：} 存在一个顶点$v \in (D \setminus T)$，其邻居中至少有3个顶点在集合U内。\\
+  \textbf{前提：} 存在一个顶点$v \in (D \setminus T)$，其邻居中至少有$3$个顶点在集合U内。\\
   \textbf{分支一：} $(G_1 \leftarrow G \setminus \{v\},\; U_1 \leftarrow U,\; D_1 \leftarrow D \setminus \{v\}, k_1 \leftarrow k - 1)$\\
   \textbf{分支二：} $(G_2 \leftarrow G,\; U_2 \leftarrow U \cup \{v\},\; D_2 \leftarrow D \setminus \{v\}, k_2 \leftarrow k)$\\
   \hline
@@ -137,7 +138,7 @@
     & u_b(I_1) = k - 1 + \frac{1}{2}cc(G[U]) - \abs{T} = u_b(I)　- 1
   \end{aligned}
 \end{equation*}
-而对于分支二，当我们决定将顶点$v$排除出反馈顶点集时，可以将其移动到集合U中，由于收缩规则2不能被应用，
+而对于分支二，当我们决定将顶点$v$排除出反馈顶点集时，可以将其移动到集合$U$中，由于收缩规则2不能被应用，
 顶点$v$的所有邻居处于不同的$G[U]$连通块中，因此$G[U_2]$依然是森林并且$cc(G[U_2]) \le cc(G[U]) - 2$。同时此时$k$保持不变，$\abs{T}$有可能增加但不可能减少。
 因此有，
 \begin{equation*}
