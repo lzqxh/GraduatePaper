@@ -5,7 +5,7 @@ Disjoint-FVS问题。
 在本节中首先，我们直接给出关于Disjoint-FVS问题的时间复杂度\footnote{定理\ref{Disjoint-FVSTime}的证明在下一节}，并基于该结论和迭代压缩技术，给出FVS问题的时间复杂度。
 之后，本章的剩余部分将注意力集中在Disjoint-FVS问题上，证明下述结论的正确性。
 \begin{theorem} \label{Disjoint-FVSTime}
-  对于一个Disjoint-FVS问题实例$I = (G, U, D, k)$，可以在$\mathcal{O}^*(C^k_{k + cc(G[U])/2})$时间复杂度内构成出符合条件的反馈顶点集合或者回答不存在这样的反馈顶点集合。
+  对于一个Disjoint-FVS问题实例$I = (G, U, D, k)$，可以在$\mathcal{O}^*(C^k_{k + cc(G[U])/2})$\footnote{$C^n_m$表示从m个不同元素中取出n个元素的组合数}时间复杂度内构成出符合条件的反馈顶点集合或者回答不存在这样的反馈顶点集合。
 \end{theorem}
 
 在定理\ref{Disjoint-FVSTime}中,我们使用了组合计数的方式来表达其复杂度，不过这并不是最终结果。
@@ -13,7 +13,7 @@ Disjoint-FVS问题。
 
 在定理\ref{Disjoint-FVSTime}的基础上，我们应用迭代压缩技术构造出下面求解FVS问题的算法。
 \begin{theorem}
-对于一个FVS问题实例$I = (G, k)$, 可以在可以在$\mathcal{O}^*(3.598^k)$时间复杂度内构成出大小不超过$k$的反馈顶点集合或者回答不存在这样的反馈定点集合。
+对于一个FVS问题实例$I = (G, k)$, 可以在$\mathcal{O}^*(3.598^k)$时间复杂度内构成出大小不超过$k$的反馈顶点集合或者回答不存在这样的反馈定点集合。
 \end{theorem}
 \begin{proof}
 令$v_1, v_2, ..., v_n$是图$G$顶点集合$V$的任意排列，对于$1 \le i \le n$定义顶点集合$V_i = \{v_1, v_2, ..., v_i\}$和图$G_i = G[V_i]$。

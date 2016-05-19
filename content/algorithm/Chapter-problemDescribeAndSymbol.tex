@@ -1,11 +1,11 @@
 \chapter{基于线性松弛下界的参数化顶点覆盖问题}
 顶点覆盖问题(Vertex Cover， 缩写为VC)，即对于参数$k$，询问给定图中是否存在大小不超过$k$的顶点集合满足：对于图中任意一条边的两个端点至少有一个在该集合中。
-该问题是最早被提出来的$21$个NP-complete问题之一\cite{karp1972reducibility}，也是最早证明是固定参数可解(Fixed parameter tractable)的问题\cite{downey2012parameterized}。
+该问题是最早被提出来的$21$个NP完全问题之一\cite{karp1972reducibility}，也是最早证明是固定参数可解(Fixed parameter tractable)的问题\cite{downey2012parameterized}。
 
 本章针对顶点覆盖基于线性松弛下界的参数化版本（VACL）设计固定参数算法。
 我们在限制多项式部分复杂度为线性的前提下，尽量优化$f(k)$函数，
 最终设计出了一个时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$的线性固定参数算法。
-该算法由两部分组成核心化部分及分支搜索部分，其中核心化的方法我们使用了之前iwata等\upcite{iwata2014linear}的算法中使用的利用网络流来优化的方法，
+该算法由两部分组成核心化部分及分支搜索部分，其中核心化的方法我们使用了之前Iwata等\upcite{iwata2014linear}的算法中使用的利用网络流来优化的方法，
 同时我们在该基础上通过对于分支搜索的策略优化使得整体算法的复杂度得到有效地降低。
 
 \section{相关术语及问题的定义}
@@ -45,7 +45,7 @@
 则$\delta^-(S)=\{(u, v) \in E\;|\;u \notin S, v \in S\}$表示所有进入$S$的边的集合，
 $\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开$S$的边的集合。
 
-\begin{definition}[强连通分量(strongly connected component)]
+\begin{definition}[强连通分量(Strongly Connected Component)]
 在有向图$G(V, E)$中，若集合$S \subseteq V$满足对于任意$u, v \in S$都存在一条路径可以从$u$到达$v$，则称$S$是有向图$G$中的一个强连通分量。
 如果集合$S$同时满足$\delta^+(S) = \emptyset$， 则称$S$是有向图$G$的一个尾强连通分量（tail strongly connected component）；
 相反，如果集合$S$同时满足$\delta^-(S) = \emptyset$， 则称$S$是有向图$G$的一个头强连通分量（head strongly connected component）。
@@ -86,7 +86,7 @@ $\delta^+(S)=\{(v, u) \in E\;|\; u \notin S, v \in S\}$表示所有离开$S$的�
 \end{aligned} \end{equation}
 其中对于图的每一个顶点$v$， 当$x(v) = 1$时表示该顶点被选进顶点覆盖集中。
 显然上述整数规划模型的约束条件保证了对于图$G$的任意一条边，至少有一个端点处于目标顶点覆盖集中。
-同时最小化目标函数$minimize\; \sum_{v \in V}{x(v)}$保证了该顶点覆盖集最小。这里我们用$vc(G)$表示最小顶点覆盖集合的大小。
+同时最小化目标函数$\sum_{v \in V}{x(v)}$保证了该顶点覆盖集最小。这里我们用$vc(G)$表示最小顶点覆盖集合的大小。
 
 在整数规划模型中，取消值必须是整数的约束条件，被称为线性规划松弛，松弛后可以获得对应线性规划模型。
 这里我们对上面的模型\ref{ModelVC}中$x(u) \in \{0, 1\}$的约束条件进行线性松弛，获得模型如下：

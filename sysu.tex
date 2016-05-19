@@ -40,63 +40,72 @@
 \newcommand{\etitle}{Research on Parameterized Algorithms for Vertex Cover and Feedback Vertex Set}
 %此处填入作者中文名
 \newcommand{\cauthor}{林泽群}
+%\newcommand{\cauthor}{XXXXXXX}
 %此处填入作者英文名
 \newcommand{\eauthor}{Zequn Lin}
+%\newcommand{\eauthor}{XXXXXXXX}
 %此处填入导师姓名
 \newcommand{\supervisor}{刘咏梅教授 \ 林瀚讲师}
+%\newcommand{\supervisor}{XXXXXXXXXXXXX}
 %此处填入专业名称
 \newcommand{\esupervisor}{Prof. Yongmei Liu, Lecturer Han Lin}
+%\newcommand{\esupervisor}{XXX}
 %此处填入专业名称
 \newcommand{\major}{计算机科学与技术}
 %此处填入专业名称
 \newcommand{\emajor}{Computer Science and Technology}
 %此处填入论文完成时间
-\newcommand{\finishdate}{2016~年~3~月}
+\newcommand{\finishdate}{2016~年~5~月}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \include{setup/cover}      %**********封面
-%\include{setup/account}    %**********原创性声明
+\include{setup/account}    %**********原创性声明
 %
 \renewcommand{\baselinestretch}{1.5}\normalsize      % 定义行距
 %
 \include{abstract/abstract_cn}    %**********中文摘要
 \include{abstract/abstract_en}    %**********英文摘要
 %
+\cleardoublepage
 \include{setup/content}    %***********生成目录
 %
 \input{setup/setchapter}    %**********设置章标题显示格式
 %
 
-
+\cleardoublepage
 \include{content/Chapter-introduction}       %*********前言
 %
+\cleardoublepage
 \include{content/Chapter-RelatedResearchOnFPT}     %*********FPT算法的研究现状
 %
 
+\cleardoublepage
+\input{content/algorithm/Chapter-problemDescribeAndSymbol}
+\input{content/algorithm/Chapter-problemToNetwork}
+\input{content/algorithm/Chapter-kernelisedAlgorithm}
+\input{content/algorithm/Chapter-branchAlgorithm}
+\input{content/algorithm/Chapter-conclusion}
 
-\include{content/algorithm/Chapter-problemDescribeAndSymbol}
-\include{content/algorithm/Chapter-problemToNetwork}
-\include{content/algorithm/Chapter-kernelisedAlgorithm}
-\include{content/algorithm/Chapter-branchAlgorithm}
-\include{content/algorithm/Chapter-conclusion}
+\cleardoublepage
+\input{content/algorithm-2/Chapter-problemDescribeAndSymbol}
+\input{content/algorithm-2/Chapter-IterativeCompression}
+\input{content/algorithm-2/Chapter-DisjointFVS}
+\input{content/algorithm-2/Chapter-conclusion}
 
-\include{content/algorithm-2/Chapter-problemDescribeAndSymbol}
-\include{content/algorithm-2/Chapter-IterativeCompression}
-\include{content/algorithm-2/Chapter-DisjointFVS}
-\include{content/algorithm-2/Chapter-conclusion}
-
+\cleardoublepage
 \include{content/Chapter-summary}        %*********总结与展望
 %
 \input{setup/setothers}       %*********设置其它部分章标题格式
 %
+\cleardoublepage
 \input{setup/bib}             %*********参考文献格式
 \bibliography{ref}            %*********设置bib文件路径
 %
-\include{appendix/appendix}      %********附录
+%\include{appendix/appendix}      %********附录
 %
 %\include{appendix/resume}        %********个人简历
 %
-%\include{appendix/thanks}        %********致谢
+\include{appendix/thanks}        %********致谢
 %
 \end{document}

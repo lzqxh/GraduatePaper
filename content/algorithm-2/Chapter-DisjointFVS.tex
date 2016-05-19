@@ -1,11 +1,11 @@
 \section{Disjoint-FVS问题算法} \label{disjoint-fvs-algorithm}
-求解Disjoint-FVS问题的方法，一般都是分支搜索算法，基本思路是取出顶点集合D中的某个顶点$v$，通过假设v是否存在于反馈顶点集中，我们可以获得实例的两个分支。
+求解Disjoint-FVS问题的方法，一般都是分支搜索算法，基本思路是取出顶点集合$D$中的某个顶点$v$，通过假设$v$是否存在于反馈顶点集中，我们可以获得实例的两个分支。
 本章中，我们将给出一个Disjoint-FVS问题的算法，以证明定理\ref{Disjoint-FVSTime}的正确性。
 
 \subsection{Disjoint-FVS问题实例的评估}
 我们的算法与之前Cao\upcite{cao2010feedback}和Kociumaka\upcite{kociumaka2014faster}的算法相似，
 与这两个算法相比，我们创新性地使用一个二元组来评估Disjoint-FVS问题实例的复杂程度\footnote{改变之前一直使用单个数值来评估Disjoint-FVS问题实例的方式}。
-这在以前的参数算法文献中，也是十分罕见的。本节中，我们将给出具体的评估方法以及对其边界的证明。
+这在以前的参数算法文献中，也是十分罕见的。本节中，我们将给出具体的评估（measure）方法以及对其边界的证明。
 
 首先，得益于前人的工作成果\upcite{cao2010feedback}，我们知道某些情况下Disjoint-FVS问题是存在多项式解法的，
 对于这部分满足条件的顶点，我们并不需要对进行枚举，而是可以在枚举完所有其他顶点后，直接在多项式时间内求解剩余问题。
@@ -111,7 +111,7 @@
 
 \begin{lemma} \label{vertexNDge3}
 对于Disjoint-FVS问题实例$I(G,U,D,k)$，当收缩规则1-5都不能应用且顶点集合$D \setminus T$非空时，
-至少存在一个顶点$v \in (D \setminus T)$，其邻居中至少有$3$个顶点在集合$U$。
+至少存在一个顶点$v \in (D \setminus T)$，其邻居中至少有$3$个顶点属于集合$U$。
 \end{lemma}
 \begin{proof}
 首先，收缩规则1-5都不能应用可以推导出$D$中所有顶点度数都大于等于$3$。

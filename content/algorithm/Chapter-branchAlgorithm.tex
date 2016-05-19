@@ -206,8 +206,8 @@ $val(x) = \abs{V_1} + 2 + (\abs{V} - \abs{V_1} - \abs{V_0} - 2) / 2 \ge vc^*(G) 
 故，分支规则三也能在线性时间复杂度内被执行。
 
 \subsection{算法时间复杂度分析}
-在上一节中，我们已经给出了3个分支规则，并且证明每个规则的正确性以及保证他们都能在线性时间内被执行。
-接下来只剩下讨论搜索树大小。这里我们利用参数$u$的下降来进行分析。
+在上一节中，我们已经给出了$3$个分支规则，并且证明每个规则的正确性以及保证他们都能在线性时间内被执行。
+接下来只剩下讨论搜索树大小。这里我们利用参数$\mu$的下降来进行分析。
 
 对于我们核心化算法来说，在给出的时候已经证明其保证收缩后的VCAL问题实例$(G', k')$相比原来的VCAL问题实例$(G, k)$，有：
 $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的每个分支的问题实例的参数，对比应用前的参数的变化。
@@ -309,9 +309,13 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
   综上，搜索树的节点个数不超过$O(2.618^{\mu})$，每个节点只需要$O(\abs{V} + \abs{E})$的时间复杂度，总时间复杂度为$O(2.618^{\mu}(\abs{V} + \abs{E}))$。
 \end{proof}
 
-\newpage
 \subsection{伪代码}
-首先给出引理\ref{LemmaUpdateMaxflow}对应伪代码如下：
+在分支算法中我们将算法分解成两个函数，首先给出引理\ref{LemmaUpdateMaxflow}对应伪代码，详见Algorithm 2。
+在Algorithm 2中，我们执行的是对网络进行退流、删点以及增广3个步骤，在引理\ref{LemmaUpdateMaxflow}的证明中已经告诉我们这整个过程的时间负责度是删除顶点个数乘以图的规模。
+
+其次，我们给出完成的VCAL问题的分支搜索算法，详见Algorithm 3。这也是本章的主要算法，其中会调用Algorithm 1和Algorithm 2，如第2、9、15行。
+还有一点要注意，该算法是一个递归算法其中有3种调用自己的方式，分别对应着本章中我们的三条分支规则。
+
 \begin{algorithm}
 \caption{引理\ref{LemmaUpdateMaxflow}算法}
 \begin{algorithmic}[1]
@@ -328,7 +332,6 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
 \end{algorithmic}
 \end{algorithm}
 
-接着是完整的VCAL问题的分支算法，如下：
 \begin{algorithm}
 \caption{完整求解VCAL问题的分支算法}
 \begin{algorithmic}[1]
@@ -337,7 +340,7 @@ $\mu(G', k') \le \mu(G,  k)$。现在讨论每个分支规则应用后产生的�
 \Function{VCAL-All}{$G, k, W, f$}
     \State $(G, k, W, f, VC_1, VC_0) \gets Kernelise(G, k, W, f)$
     \Comment 调用核心化算法进行核心化
-    \State $\mu \gets k - F / 2$
+    \State $\mu \gets k - F(f) / 2$
 
     \If {$\mu < 0$} \Return False \Comment 搜索的终止条件
     \ElsIf {图$G$中已经没有顶点} \Return True
